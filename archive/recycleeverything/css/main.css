@@ -1,0 +1,36 @@
+body {
+	padding:0;
+	margin:0;
+	font-family: 'PT+Serif' !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	
+}
+
+.serif {
+	font-family: 'PT+Serif' !important;
+}
+.sans-serif {
+	font-family: 'Montserrat' !important;
+}
+.font-weight-black {
+	font-weight: 700;
+}
+.font-weight-light {
+	font-weight: 100;
+}
+.navbar-light .navbar-text a {
+	color: #7EA630;
+}
+.hero {
+	background-image:url(../img/hero.jpg);
+	background-repeat:no-repeat;
+	background-position:center top;
+	background-size: cover;
+	height:580px;
+}
+
+.paper {
+	background-color: #eeeeee;
+}

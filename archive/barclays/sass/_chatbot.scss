@@ -1,0 +1,671 @@
+#chatbot {
+    position:fixed;
+    //top:0;
+    right:0;
+    bottom:0;
+    //left:0;
+    width:200px;
+    height:100px;
+    z-index:1050;
+    
+    .bounce-in-fwd {
+        -webkit-animation: bounce-in-fwd 0.5s both;
+        animation: bounce-in-fwd 0.5s both;
+    }
+
+    @-webkit-keyframes bounce-in-fwd {
+        0% {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+            opacity: 0;
+        }
+        38% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+            opacity: 1;
+        }
+        55% {
+            -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+        }
+        72% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+        }
+        81% {
+            -webkit-transform: scale(0.84);
+            transform: scale(0.84);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+        }
+        89% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+        }
+        95% {
+            -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+        }
+        100% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+        }
+    }
+
+    @keyframes bounce-in-fwd {
+        0% {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+            opacity: 0;
+        }
+        38% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+            opacity: 1;
+        }
+        55% {
+            -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+        }
+        72% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+        }
+        81% {
+            -webkit-transform: scale(0.84);
+            transform: scale(0.84);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+        }
+        89% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+        }
+        95% {
+            -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+            -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+        }
+        100% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+        }
+    }
+
+    .typing-indicator {
+        background-color: white;
+        will-change: transform;
+        width: auto;
+        border-radius: 50px;
+        padding: 12px;
+        display: table;
+        margin: 0 auto;
+        position: relative;
+        animation: 2s bulge infinite ease-out;
+        margin-top: 40px;
+        float: right;
+        margin-right: 50px;
+        margin-bottom: 20px;
+        box-shadow: -1px 2px 30px rgba(17, 54, 84, .03);
+        clear: both;
+    }
+
+    .dot {
+        height: 8px;
+        width: 8px;
+        float: left;
+        margin: 0 1px;
+        background-color: #9E9EA1;
+        display: block;
+        border-radius: 50%;
+        opacity: 0.4;
+    }
+
+    .dot:nth-of-type(1) {
+        animation: 1s blink infinite 0.5s;
+    }
+
+    .dot:nth-of-type(2) {
+        animation: 3s blink infinite 0.6s;
+    }
+
+    .dot:nth-of-type(3) {
+        animation: 6s blink infinite 0.7s;
+    }
+
+    @keyframes blink {
+        50% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes bulge {
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .card-container::-webkit-scrollbar {
+        width: 0px;
+        /* remove scrollbar space */
+        background: transparent;
+        /* optional: just make scrollbar invisible */
+    }
+
+
+    /* optional: show position indicator in red */
+
+    .card-container::-webkit-scrollbar-thumb {
+        display: none;
+    }
+
+    .card-container {
+        overflow-x: hidden;
+        width: 100%;
+        white-space: nowrap;
+        padding-right: 10px;
+    }
+
+    .card-description {
+        font-size: 10px;
+        margin-left: 5px;
+    }
+
+    .card-description b {
+        font-size: 14px;
+    }
+
+    .card-button {
+        display: block;
+        font-size: 14px;
+        cursor: pointer;
+        position: absolute;
+        width: 100%;
+        border-bottom: 1px solid $barclays-light-grey;
+        text-align: center;
+        color: $barclays-button-blue;
+        padding: 10px;
+
+        
+    }
+
+    .card-button span {
+        display:block;
+    }
+
+    .list-group-item {
+        text-align: center;
+        color: $barclays-button-blue;
+        font-size: 14px;
+        cursor:pointer;
+        border-top:0;
+        border-right:0;
+        border-left:0;
+        border-bottom: 1px solid $barclays-light-grey;
+        margin-bottom: 0;
+    }
+    .list-group-item:last-child {
+        border-bottom: 0;
+    }
+    
+    .card-image {
+        background-color: grey;
+        height: 140px;
+        display: block;
+        background-size: cover;
+    }
+
+    .card {
+        position: relative;
+        margin-left: 20px;
+        margin-top: 20px;
+        border: 1px solid $barclays-light-grey;
+        height: 250px;
+        width: 250px;
+        box-shadow: 0 1px 3px 0 #D4D4D5, 0 0 0 1px #D4D4D5;
+        border-radius: 8px;
+        display: inline-block;
+    }
+
+    .quickbutton {
+        border: 1px solid #00aeef;
+        background-color: transparent;
+        border-radius: 100px;
+        padding: 8px 10px 8px 10px;
+        cursor: pointer;
+        outline: none !important;
+        display: inline-block;
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        float: right;
+    }
+
+    .quickbutton:hover {
+        background-color: #00aeef;
+        color: white;
+    }
+
+    .quickbutton-container {
+        width: 20px;
+    }
+
+    .speech-bubble-user {
+        background-color: #ffffff;
+        border-color: rgb(127, 127, 127);
+        height: auto;
+        border-radius: 34px;
+        border-width: 0px;
+        margin-top: 15px;
+        width: auto;
+        max-width: 250px;
+        display: inline-block;
+        margin-left: 40px;
+        margin-bottom: 10px;
+        float: left;
+        clear: both;
+    }
+
+    .user-input-text {
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 5px;
+        padding-bottom: 0px;
+        color: #6E7A89;
+        word-wrap: break-word;
+    }
+
+    .speech-bubble-bot {
+        background-color: #ffffff;
+        //border-color: rgb(127, 127, 127);
+        height: auto;
+        border-radius: 4px;
+        border-width: 0px;
+        width: auto;
+        max-width: 250px;
+        margin-right: 0px;
+        margin-bottom: 10px;
+        float: right;
+        box-shadow: -1px 2px 30px rgba(17, 54, 84, .03);
+        margin-top: 15px;
+        clear: left;
+    }
+
+    .bot-input-text {
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        color: #6E7A89;
+        word-wrap: break-word;
+    }
+
+    .outerbox {
+        font-family: "Expert Sans Regular", "Trebuchet MS", Arial, Verdana, sans-serif !important;
+        height: 100vh;
+        width: 350px;
+        float: right;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        display: block;
+        top: 0px;
+        right: 0px;
+        position: fixed;
+        display: none;
+    }
+
+    .header {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        background-color: #fff;
+        text-align:left;
+        border-bottom: 1px solid #ededed;
+
+    }
+    .header .logo {
+        height: 32px;
+        width: 30px;
+        margin-top:15px;
+        margin-left:20px;
+    }
+
+    .chat-body {
+        width: auto;
+        height: 200px;
+        background-color: #f7f7f7;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        padding-bottom: 25px;
+
+    }
+    .chat-body .card-image {
+        display:none;
+    }
+    .chat-body .card-description {
+        text-align: center;
+        background-color: $barclays-dark-blue;
+        color: #fff;
+        font-size: 14px;
+        padding-top: 60px;
+        padding-bottom: 15px;
+        background-position: center 20px;
+        background-repeat: no-repeat;
+        background-image:url('../img/icons/icon-chatbot-time.png');
+        margin:0;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .input-field {
+        height: 50px;
+        width: 100%;
+        position: absolute;
+        background-color: white;
+        border-top: 1px solid $barclays-light-grey;
+    }
+
+    .text-input {
+        height: 50px;
+        border: none;
+        margin-left: 20px;
+        font-size: 16px;
+        outline: none;
+        width: 260px;
+        margin-top: 0px;
+    }
+
+    .chat-head {
+        //border-radius: 100px;
+        //background-color: black;
+        //height: 123px;
+        //width: 230px;
+        display: block;
+        float: right;
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        cursor: pointer;
+
+        img {
+            //box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+        
+        //background-image: url("img/logo.png");
+        
+    }
+
+    .close {
+        float: right;
+        top: 25px;
+        right: 20px;
+        position: absolute;
+        //color: white;
+    }
+
+    .close:hover {
+        color: #00aeef;
+    }
+
+    .send {
+        //font-size: 20px;
+        width: 24px;
+        height: 24px;
+        margin-right: 20px;
+        margin-top: 15px;
+        cursor: pointer;
+        //color: rgb(83, 134, 213);
+        float: right;
+        //border-radius: 100px;
+        background-image:url('../img/icons/icon-chatbot-send.png');
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+
+    .emoji {
+        font-size: 20px;
+        margin-right: 10px;
+        margin-top: 17px;
+        cursor: pointer;
+        float: right;
+    }
+
+    .send:hover {
+        font-size: 25px;
+    }
+
+    @media only screen and (max-width: 320px) {
+        .outerbox {
+            width: 100%
+        }
+
+    }
+
+    @media only screen and (max-width: 480px) {
+        .outerbox {
+            width: 100%
+        }
+
+    }
+
+    @media only screen and (max-width: 768px) {
+        .outerbox {
+            width: 100%
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+
+    /* Track */
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+
+    /* Handle */
+
+    ::-webkit-scrollbar-thumb {
+        background: #00aeef;
+    }
+
+    .slide-in-left {
+        -webkit-animation: slide-in-left 0.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+        animation: slide-in-left 0.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    }
+
+    @-webkit-keyframes slide-in-left {
+        0% {
+            -webkit-transform: translateX(-1000px);
+            transform: translateX(-1000px);
+            opacity: 0;
+        }
+        100% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slide-in-left {
+        0% {
+            -webkit-transform: translateX(-1000px);
+            transform: translateX(-1000px);
+            opacity: 0;
+        }
+        100% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .chat-icon {
+        height: 28px;
+        display: inline-block;
+        float: right;
+        margin-top: 20px;
+    }
+
+    .chat-icon-user {
+        font-size: 20px;
+        margin-left: 30px;
+    }
+
+    .timestamp-container {
+        margin-bottom: -10px;
+        font-size: 12px;
+        color: rgb(170, 170, 180);
+        display: block;
+        clear: both;
+        padding-top: 15px;
+        margin-left: 45px;
+    }
+
+    .timestamp-container-bot {
+        margin-bottom: -10px;
+        font-size: 12px;
+        color: rgb(170, 170, 180);
+        display: block;
+        clear: both;
+        padding-top: 15px;
+        margin-right: 45px;
+        text-align: right;
+    }
+
+    .next-button-font {
+        font-size: 35px;
+        float: right;
+        color: #00aeef;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+    }
+
+    .previous-button-font {
+        font-size: 35px;
+        float: left;
+        color: #00aeef;
+        cursor: pointer;
+        margin-left: 10px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+    }
+
+    .button-container {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .header-body-text {
+        color: rgb(170, 170, 180);
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .hyperlink-padding {
+        padding: 20px 20px 20px 20px !important;
+        display: block;
+    }
+
+    .barclays-search {
+        margin-top: 100px;
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+        text-align: center;
+    }
+
+    .search{
+        height: 30px;
+        border: 1px solid grey;
+        border-radius:5px;
+        display: none;
+    }
+
+    .results .result {
+        text-align: left;
+    }
+
+    .results .result h4 {
+        color: rgb(0, 174, 239);
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .welcome-messages {
+        border: 0px;
+        font-style: normal;
+        font-variant-ligatures: normal;
+        font-variant-caps: normal;
+        padding: 0px;
+        line-height: normal;
+        margin: 0px;
+        font-weight: normal;
+        vertical-align: baseline;
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        z-index: 1337;
+    }
+
+    .welcome-messages .welcome-message {
+        clear: both;
+        cursor: pointer;
+        transform: scale(1);
+        display: block;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 1.5;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: normal;
+        font-variant-ligatures: normal;
+        font-variant-caps: normal;
+        font-family: sans-serif;
+        vertical-align: baseline;
+        float: right;
+        color: rgb(60, 60, 60);
+        box-shadow: rgba(0, 0, 0, 0.1) 2px 4px 14px 0px;
+        background-color: white;
+        margin: 10px 0px 0px;
+        padding: 10px;
+        border-top-width: 0px;
+        border-right-width: 0px;
+        border-bottom-width: 0px;
+        border-radius: 30px;
+        max-width: 360px;
+        z-index: 1337;
+    }
+}

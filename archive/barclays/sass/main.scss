@@ -1,0 +1,890 @@
+@import "variables";
+@import "print";
+@import "screen";
+@import "normalize";
+@import "ie";
+@import "chatbot";
+@import "header";
+@import "date-picker";
+
+@font-face {
+    font-family: "expert-sans-light";
+    src: url("../fonts/expertsans-b14-light-webfont.woff") format('woff');
+}
+@font-face {
+    font-family: "expert-sans-lighter";
+    src: url("../fonts/expertsans-light-webfont.woff") format('woff');
+}
+@font-face {
+    font-family: "expert-sans-regular";
+    src: url("../fonts/expertsans-regular-webfont.woff") format('woff');
+}
+
+/*! HTML5 Boilerplate v6.0.1 | MIT License | https://html5boilerplate.com/ */
+
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html {
+    color: #222;
+    font-size: 1em;
+    line-height: 1.4;
+    padding:0;
+    margin:0;
+}
+
+/*
+ * Remove text-shadow in selection highlight:
+ * https://twitter.com/miketaylr/status/12228805301
+ *
+ * Vendor-prefixed and regular ::selection selectors cannot be combined:
+ * https://stackoverflow.com/a/16982510/7133471
+ *
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+/*
+ * Remove the gap between audio, canvas, iframes,
+ * images, videos and the bottom of their containers:
+ * https://github.com/h5bp/html5-boilerplate/issues/440
+ */
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+    resize: vertical;
+}
+
+/* ==========================================================================
+   Browser Upgrade Prompt
+   ========================================================================== */
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+body, html {
+    padding:0;
+    margin:0;
+    font-family: "expert-sans-lighter";
+    background-color:#ffffff;
+    font-size: 16px;
+    height: 100%;
+}
+
+#app-container {
+    position: absolute;
+    top:158px;
+    right:0;
+    //bottom:0;
+    left:0;
+    //height: 10000px;
+    width: 100%;
+    padding:0;
+    margin:0;
+    overflow: auto;
+}
+
+.divider-horz {
+    width: 48px;
+    height: 4px;
+    background-color: $barclays-button-blue;
+    margin: 20px auto 40px auto;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.up-dent {
+    background-color: #fff;
+    margin-top: -100px;
+    position: relative;
+}
+
+.container-zebra {
+    background-color: $barclays-light-blue;
+}
+
+#bootstrap-override {
+    
+    .jumbotron {
+        border-radius: 0;
+        width: 100%;
+        margin: 0;
+        padding:0;
+    }
+
+    .container {
+        padding-top: 40px;
+        padding-bottom: 40px;
+
+        .container-header {
+            text-align: center;
+            padding-bottom: 24px;
+            max-width: 680px;
+            margin-left:auto;
+            margin-right:auto;
+        }
+    }
+
+    .container-zebra {
+        .card {
+            background-color: #fff;
+        }
+    }
+
+    .card {
+        background-color: $barclays-card-grey;
+
+        .card-topic {
+            font-weight: 800;
+            color: $barclays-dark-blue;
+        }
+        .card-text {
+            font-size: 16px;
+        }
+        .card-link {
+            color: $barclays-button-blue;
+            text-decoration: underline;
+        }
+        .card-title {
+            color: $barclays-dark-blue;
+        }
+        .card-footer {
+            background-color: rgba(0,0,0,0);
+            border-top:0;
+        }
+    }
+
+    a {
+        color: $barclays-button-blue;
+    }
+
+    .btn-barclays {
+        font-weight: 100;
+        font-size: 16px;
+        //letter-spacing: 1px;
+        line-height: 28px;
+        height: 44px;
+        border-radius: 20px;
+        padding-left: 35px;
+        padding-right: 35px;
+
+        &.btn-primary {
+            background-color: $barclays-button-blue;
+            color: #fff;
+            border: 1px solid $barclays-button-blue;
+        }
+        &.btn-secondary {
+            background-color: #fff;
+            color: $barclays-button-blue;
+            border: 1px solid $barclays-button-blue;
+        }
+        &.btn-sm {
+            line-height: 15px;
+            height: 30px;
+
+        }
+    }
+
+
+
+    .btn-group-barclays {
+        font-weight: 100;
+        font-size: 16px;
+        letter-spacing: 1px;
+        border: 0;
+        line-height: 22px;
+        height: 44px;
+        margin-bottom: 20px;
+
+        .btn-secondary {
+            border-color: $barclays-button-blue;
+            background-color: #fff;
+            color: $barclays-button-blue;
+        }
+
+        .btn-primary {
+            background-color: $barclays-button-blue;
+        }
+
+        .btn {
+            padding-left: 30px;
+            padding-right: 30px;
+            line-height: 30px;
+            padding-top:30px;
+        }
+    }
+
+    .breadcrumb {
+        background-color: rgba(0,0,0,0);
+
+        .breadcrumb-item {
+            font-weight: bold;
+
+            &.active {
+                font-weight: normal;
+                color: #fff;
+            }
+
+            &:before {
+                color: #fff;
+            }
+        }
+    }
+
+    .actions {
+        .btn {
+            margin-right: 10px;
+        }
+    }
+
+    h2 {
+        font-size: 36px;
+        color: $barclays-dark-blue;
+        margin-bottom: 10px;
+    }
+    h3 {
+        font-size: 24px;
+        color: $barclays-dark-blue;
+        margin-bottom: 10px;
+    }
+    h4 {
+        font-size: 21px;
+        color: $barclays-dark-blue;
+        margin-bottom: 20px;
+    }
+    h5 {
+        font-size: 19px;
+        color: $barclays-dark-blue;
+        margin-bottom: 12px;
+    }
+
+    .hero {
+        background-color: $barclays-dark-blue;
+        height: 480px;
+        color: #ffffff;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+
+        blockquote {
+            margin-bottom: 18px;
+            margin-top: 20px;
+            border-left: 4px solid $barclays-cyan;
+            padding-left: 20px;
+            max-width: 520px;
+        }
+
+        .document-metadata {
+
+             .document-metadata-item {
+                display: inline-block;
+                padding-left: 20px;
+                color: #fff;
+                font-size: 14px;
+                background-position: left center;
+                background-repeat:no-repeat;
+
+                &.location {
+                    background-image: url(../img/icons/icon-document-metadata-location.png);
+                    margin-right: 20px;
+                }
+                &.business-unit {
+                    background-image: url(../img/icons/icon-document-metadata-business-unit.png);
+                    padding-left: 24px;
+                    margin-right: 10px;
+                }
+            }
+            
+        }
+
+        .actions {
+            margin-left: 25px;
+            margin-top: 25px;
+        }
+
+        &.homepage {
+            text-align: center;
+            padding-top: 70px;
+
+            .search {
+                max-width: 700px;
+                margin:40px auto;
+
+                input[type=text] {
+                    max-width: 500px;
+                    border-left:0;
+                    border-right:0;
+                }
+            }
+        }
+        &.hero-paternity-leave {
+            background-image: url(../img/heros/hero-paternity-leave.jpg);
+            background-position: center center;
+        }
+        &.hero-shared-parental-leave {
+            background-image: url(../img/heros/hero-shared-parental-leave.jpg);
+            background-position: center center;
+        }
+        &.hero-maternity-leave {
+            background-image: url(../img/heros/hero-maternity-leave.jpg);
+            background-position: center center;
+        }
+        &.hero-annual-leave {
+            background-image: url(../img/heros/hero-annual-leave.jpg);
+            background-position: center center;
+        }
+
+        h1 {
+            font-size: 46px;
+            margin-bottom: 18px;
+            margin-top: 0;
+            color: #fff;
+        }
+        h2 {
+            font-size: 21px;
+            color: #fff;
+        }
+        h3 {
+            font-size: 21px;
+            color: #fff;
+        }
+
+        .information-overlay {
+            line-height: 50px;
+            background-color:#fff;
+            opacity: 0.7;
+            height: 50px;
+            position:absolute;
+            bottom:0;
+            left:0;
+            right:0;
+            width:100%;
+        }
+    }
+
+    .subnav {
+        background-color: $barclays-dark-blue;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+
+        li {
+            padding: 0 20px;
+            border-right: 1px solid #fff;
+
+            &:last-child {
+                border-right: 0;
+            }
+        }
+
+        .container {
+            margin:0 auto;
+            padding-top:0;
+            padding-bottom:0;
+        }
+
+        a {
+            color: #fff;
+        }
+    }
+    
+    .component-key-highlights {
+        .icon {
+            display: block;
+            margin: 0 auto 30px auto;
+            height: 70px;
+            background-position: center center;
+            background-repeat: no-repeat; 
+        }
+    }
+
+    .input-group {
+
+        &.search {
+
+            input[type=text] {
+                border-radius: 0;
+                border-right:0;
+                height: 44px;
+                margin-right: 1px;
+                outline: 0;
+                display:block;
+            }
+
+            .tt-input {
+                width: 540px;
+            }
+            .tt-menu {
+                background-color: #fff;
+                padding: 20px;
+                border: 1px solid $barclays-light-grey;
+                margin-top:10px;
+                border-radius: 8px;
+                box-shadow: 4px 4px 2px rgba(0,0,0,0.1);
+            }
+            .tt-suggestion {
+                margin-bottom: 20px;
+                width: 510px;
+                display: block;
+                text-align: left;
+
+                &:hover {
+                    cursor:pointer;
+                    color: $barclays-button-blue;
+                }
+            }
+
+            .input-group-prepend {
+                .input-group-text {
+                    border-radius: 50px 0 0 50px;
+                }
+            }
+
+            .input-group-append {
+                //margin-left: -118px;
+                border-radius: 0 50px 50px 0;
+                border: 1px solid #ced4da;
+                border-left: 0;
+                background-color: #fff;
+
+                .btn {
+                    margin-right: 5px;
+                    margin-top: 7px;
+                    height: 30px;
+                    line-height: 15px;
+                    padding-left: 25px;
+                    padding-right: 25px;
+                }
+            }
+
+
+        }
+    }
+    
+    .nav-pills {
+        margin-bottom: 24px !important;
+
+        .nav-item {
+            border: 1px solid $barclays-button-blue;
+            border-radius: 0;
+
+            &:first-child, &:first-child .nav-link {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
+            &:last-child, &:last-child .nav-link {
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .nav-link {
+                border-radius: 0;
+                background-color: #fff;
+
+                &.active {
+                    background-color: $barclays-button-blue;
+                    color: #fff;
+                }
+            }
+        }
+    }
+
+    .accordion {
+        .card {
+            border-radius:0;
+
+            &:first-child {
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+            }
+            &:last-child {
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+
+            .card-header {
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+                background-color: #fff;
+                border-bottom: 0;
+
+                .btn-link {
+                    font-size: 24px;
+                    font-weight: 100;
+                    color: $barclays-dark-blue;
+                    text-decoration: none;
+                    background-image: url(../img/icons/accordion-arrow-up.png);
+                    background-repeat: no-repeat;
+                    background-position: left center;
+                    padding-left: 40px;
+
+                    &.collapsed {
+                        background-image: url(../img/icons/accordion-arrow-down.png);
+                    }
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .steps {
+        
+
+        .step {
+            padding-left: 48px;
+            padding-bottom: 40px;
+            position: relative;
+            border-left:2px solid $barclays-dark-blue;
+
+            &:last-child {
+                border-left: 0;
+            }
+
+            .step-title {
+                padding-top: 16px;
+            }
+
+            .step-count {
+                position: absolute;
+                top:0;
+                left:-29px;
+                width: 58px;
+                height: 58px;
+                border-radius: 50%;
+                background-color: $barclays-button-blue;
+                color: #fff;
+                line-height: 48px;
+                font-weight: bold;
+                font-size: 22px;
+                text-align: center;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #fff;
+            }
+
+            ul {
+                list-style-type: disc;
+                list-style-position: inside;
+                margin: 20px 0 0 0;
+
+                li {
+                    padding-bottom: 5px;
+                }
+            }
+        }
+    }
+
+    .downloads {
+        .card {
+            background-color: #fff;
+            margin-bottom: 20px;
+
+            .card-body {
+                padding: 15px;
+                background-image: url(../img/icons/icon-download-file.png);
+                background-position: right 20px center;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+
+    .banner {
+        background-color: $barclays-grey;
+        text-align: center;
+        height: 72px;
+        margin:0;
+
+        p {
+            line-height: 72px;
+        }
+    }
+
+    .footer {
+        display:block;
+        margin-top:0;
+        background-color: $barclays-dark-blue;
+        color: #fff;
+        text-transform: uppercase;
+        text-align:center;
+        height: 185px;
+        line-height: 185px;
+    }
+
+    .checklist {
+        list-style-position: inside;
+        list-style-image: none;
+        margin-bottom: 36px;
+        
+        .check {
+            padding-left: 30px;
+            padding-bottom: 10px;
+            background-image: url(../img/icons/icon-list-bullet-tick.png);
+            background-position: left 2px;
+            background-repeat: no-repeat;
+        }
+    }
+
+    i.info {
+        width: 20px;
+        height: 20px;
+        background-image: url(../img/icons/icon-help.png);
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+
+    .card-deck {
+        &.more-cards {
+            display:none;
+        }
+    }
+}
+
+.help {
+    cursor: help;
+}
+
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Hide visually and from screen readers
+ */
+
+.hidden {
+    display: none !important;
+}
+
+/*
+ * Hide only visually, but have it available for screen readers:
+ * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+ *
+ * 1. For long content, line feeds are not interpreted as spaces and small width
+ *    causes content to wrap 1 word per line:
+ *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+ */
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    -webkit-clip-path: inset(50%);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    white-space: nowrap; /* 1 */
+}
+
+/*
+ * Extends the .visuallyhidden class to allow the element
+ * to be focusable when navigated to via the keyboard:
+ * https://www.drupal.org/node/897638
+ */
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    -webkit-clip-path: none;
+    clip-path: none;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+    white-space: inherit;
+}
+
+/*
+ * Hide visually and from screen readers, but maintain layout
+ */
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 1.25dppx),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid the additional HTTP request:
+   http://www.phpied.com/delay-loading-your-print-css/
+   ========================================================================== */
+
+@media print {
+    *,
+    *:before,
+    *:after {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster:
+                                   http://www.sanbeiji.com/archives/953 */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links that are fragment identifiers,
+     * or use the `javascript:` pseudo protocol
+     */
+
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+
+    pre {
+        white-space: pre-wrap !important;
+    }
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    /*
+     * Printing Tables:
+     * http://css-discuss.incutio.com/wiki/Printing_Tables
+     */
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}

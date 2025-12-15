@@ -1,0 +1,37 @@
+.steps {
+	padding:20px 0;
+	border-bottom: 1px solid #000;
+	background: #efefef;
+	text-align: center;
+}
+
+.nav-fixed {
+	position: fixed;
+	top:0;
+	height: 30px;
+	z-index: 1000;
+}
+
+div.spacer {
+	height: 40px;
+	position: relative;
+}
+
+.add-item .panel {
+	background:#ddd;
+	border: 1px solid #333;
+}
+.add-item .panel:hover {
+	cursor:pointer;
+	background-color:#ddd;
+}
+
+.footer {
+	position: fixed;
+	width: 100%;
+	bottom: 0;
+	height: 50px;
+	text-align:center;
+	background: #efefef;
+	border-top:1px solid #ccc;
+}

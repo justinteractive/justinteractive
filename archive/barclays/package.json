@@ -1,0 +1,16 @@
+{
+  "name": "myhr",
+  "version": "0.0.1",
+  "author": "Justin Robinson",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-compass": "^1.1.1",
+    "grunt-contrib-compress": "~1.4.3",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-uglify": "^3.1.0",
+    "grunt-contrib-watch": "^1.0.1"
+  }
+}

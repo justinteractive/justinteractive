@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Grid</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="p-4">
+  <!-- Parent container that fits the width and handles horizontal scrolling -->
+  <div class="w-full overflow-x-auto">
+    <table class="min-w-full w-full border table-fixed">
+      <thead class="bg-gray-10 text-xs">
+        <tr class="border-b">
+          <!-- Column 1 -->
+          <th class="p-2 border-r text-left w-[150px]">
+            <div class="flex justify-between items-center">
+              <span>Column 1</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 2 -->
+          <th class="p-2 border-r text-left w-[180px] ">
+            <div class="flex justify-between items-center">
+              <span>Column 2</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 3 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 3</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 4 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 4</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 5 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 5</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 6 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 6</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 7 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 7</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 8 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 8</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 9 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 9</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 10 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 10</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 11 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 11</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 12 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 12</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 13 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 13</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 14 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 14</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 15 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 15</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 16 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 16</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 17 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 17</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 18 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 18</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 19 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 19</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 20 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 20</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 21 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 21</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 22 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 22</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 23 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 23</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 24 -->
+          <th class="p-2 border-r text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 24</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+          <!-- Column 25 (last column; no right border if not needed) -->
+          <th class="p-2 text-left">
+            <div class="flex justify-between items-center">
+              <span>Column 25</span>
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example data row -->
+        <tr class="hover:bg-gray-50 text-xs">
+          <td class="p-2 border-r">Data 1</td>
+          <td class="p-2 border-r">Data 2</td>
+          <td class="p-2 border-r">Data 3</td>
+          <td class="p-2 border-r">Data 4</td>
+          <td class="p-2 border-r">Data 5</td>
+          <td class="p-2 border-r">Data 6</td>
+          <td class="p-2 border-r">Data 7</td>
+          <td class="p-2 border-r">Data 8</td>
+          <td class="p-2 border-r">Data 9</td>
+          <td class="p-2 border-r">Data 10</td>
+          <td class="p-2 border-r">Data 11</td>
+          <td class="p-2 border-r">Data 12</td>
+          <td class="p-2 border-r">Data 13</td>
+          <td class="p-2 border-r">Data 14</td>
+          <td class="p-2 border-r">Data 15</td>
+          <td class="p-2 border-r">Data 16</td>
+          <td class="p-2 border-r">Data 17</td>
+          <td class="p-2 border-r">Data 18</td>
+          <td class="p-2 border-r">Data 19</td>
+          <td class="p-2 border-r">Data 20</td>
+          <td class="p-2 border-r">Data 21</td>
+          <td class="p-2 border-r">Data 22</td>
+          <td class="p-2 border-r">Data 23</td>
+          <td class="p-2 border-r">Data 24</td>
+          <td class="p-2">Data 25</td>
+        </tr>
+        <!-- Additional rows can be added here -->
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
