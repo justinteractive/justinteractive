@@ -1,103 +1,147 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
-<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
-<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<html lang="en">
 <head>
-	<!-- Begin Page Info -->
-	<meta charset="utf-8"/>
-	<title>justinteractive - Elegant Simplicity</title>
-	<meta name="description" content="Justinteractive is a London based digital design consultant and user experience evangelist, specialising in sophisticated rich internet applications and elegant design lead software solutions for leading London startups."/>
-	<meta name="keywords" content="justinteractive, information architect, mobile, iphone, android, user experience, ux, ia, designer, consultant, ucd, interaction design, digital designer, creative director, product, vp product"/>
-
-	<!-- Mobile Specific Metas
-    ================================================== -->
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	
-	<!-- Favicons
-    ================================================== -->
-	<link rel="shortcut icon" href="images/favicon.ico">
-	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-	
-	<!-- CSS
-    ================================================== -->
-	<link rel="stylesheet" href="css/base.css">
-	<link rel="stylesheet" href="css/skeleton.css">
-	<link rel="stylesheet" href="css/layout.css">
-	<!--link rel="stylesheet" href="css/core.css" media="all" type="text/css" /-->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>justinteractive — A strategic design and innovation studio</title>
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Nice, readable type scale */
+    :root {
+      --leading: 1.6;
+    }
+    body { line-height: var(--leading); }
+  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital,wght@0,400;1,400&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="icon" href="./images/favicon.ico" />
 </head>
+<body class="bg-white text-slate-900 antialiased">
+  <!-- Page wrapper -->
+  <div class="mx-auto max-w-[1464px] px-5 md:px-8 lg:px-10">
 
-<body>
-	<div class="container">
-		<div class="two columns offset-by-fourteen social-icons">
-			<ul class="inline">
-				<li><a class="medium" href="https://medium.com/@justinteractive"><img src="images/icon-medium.png" /></a></li>
-				<li><a class="twitter" href="http://www.twitter.com/justinteractive"><img src="images/icon-twitter.png" /></a></li>
-				<li><a class="linkedin"  href="http://uk.linkedin.com/in/justinteractive"><img src="images/icon-linkedin.png" /></a></li>
-			</ul>
-		</div>
-		<div class="ten columns offset-by-one">
-			<h1><strong>just</strong>interactive <img class="crosshair" src="images/crosshair.png" /></h1>
-			<h2>digital product designer &amp; user experience evangelist, strategy to execution</h2>
-		</div>
-		<div class="ten columns offset-by-one">
-			<h3><strong>BBC</strong> iPlayer V3</h3>
-			<!--h4 class="timestamp">summer 2009</h4-->
-			<a class="folio-thumb bbc-iplayer" href="bbc-iplayer.html"></a>
-			<p>Working with <a href="http://www.method.com">Method</a> in a team of three, conceptualised and designed the fundamental interaction design patterns that have set the iPlayer apart from it's competitors. Personally responsible for the inline Favourites widget and integral to the conception of the hero and condensing the high level navigation to the two primary reasons why anyone visits iPlayer - TV or Radio.</p>
-			<p><a href="bbc-iplayer.html" class="more">Read more...</a></p>
-			<hr />
-		</div>
+    <!-- Top bar / wordmark -->
+    <header class="mt-10 mb-16">
+      <img src="images/logotype.png" />
+    </header>
 
-		<div class="ten columns offset-by-one">
-			<h3><strong>Societe Generale</strong> Alpha FX</h3>
-			<a class="folio-thumb socgen" href="socgen-alpha.html"></a>
-			<p>Lead ux architect as part of the <a href="http://www.lab49.com">Lab49</a> consultancy team on-site woking in an agile SCRUM process delivering rapid design solutions and iterative revision strategies.</p>
-			<p><a href="socgen-alpha.html">Read more...</a></p>
-			<hr />
-		</div>
-		<div class="ten columns offset-by-one">
-			<h3><strong>Morgan Stanley</strong> FXOS</h3>
-			<a class="folio-thumb ms-fxos" href="ms-fxos.html"></a>
-			<p>UX architect &amp; designer representing <a href="http://www.lab49.com">Lab49</a>. Engaged to investigate the internal tools for sales and trading teams after the success of Matrix. Conducted floor interviews and produced many iterations until delivering a very high fidelity wireframe accompanied by elegant user journeys and UI architecture.</p>
-			<p>The brief was to create a snappy and comprehensive means of receiving and processing requests for service. Then make sure the app. links to our suite of legacy applications that we'll get round to updating in the future.</p>
-			<p>Based on much desk research and time spent on the trading floor, I designed a desktop application wrapper that delivered a ticket processing system with a comprehensive CMS. Then connected it to the legacy apps and launched them from inside the wrapper, maintaining context.</p>
-			<p><a href="ms-fxos.html">Read more...</a></p>
-			<hr />
-		</div>
-		<div class="ten columns offset-by-one">
-			<h3><strong>Thomson Reuters</strong> Eikon</h3>
-			<a class="folio-thumb tr-eikon" href="tr-mapping.html"></a>
-			<p>Associate Creative Director working in the Sapient Global Markets division and partnering with Neville Brody's Research Studios. Delivered all aspects of the user experience process from hosting stakeholder workshops right through to user journeys, wireframes and visual design from RS.</p>
-			<p><a href="tr-mapping.html">Read more...</a></p>
-			<hr />
-		</div>
-		<div class="ten columns offset-by-one">
-			<h3><strong>RBS</strong> Risk management</h3>
-			<a class="folio-thumb rbs-risk" href="rbs-risk.html"></a>
-			<p>Associate Creative Director working with Sapient Global Markets and RBS. An exploratory prototype to support research and development into grid processing risk systems. A desktop tool was envisaged and conceived through user journeys, analysis, wireframes and high fidelity visual design.</p>
-			<p><a href="rbs-risk.html">Read more...</a> or view incompleted <a href="rbs-portal.html">portal scamps</a>.</p>
-			<hr />
-		</div>
-		<div class="ten columns offset-by-one">
-			<h3><strong>BNP</strong> Risk navigator</h3>
-			<a class="folio-thumb bnp-pitch" href="bnp-pitch.html"></a>
-			<p>As part of a pitch for the user interface for a new bespoke Microsoft Silverlight credit risk management tool, I designed and produced a series of hi-fidelity visuals to communicate the impact and ROI when invested into a rich and intelligently designed UI.</p>
-			<p><a href="bnp-pitch.html">Read more...</a></p>
-			<hr />
-		</div>
-	</div>
+    <!-- Hero -->
+    <section class="pt-2 pb-6">
+      <h1 class="font-serif tracking-tight leading-[72px] text-[64px] mb-16">
+        A strategic design and<br class="hidden sm:block" />
+        innovation studio.
+      </h1>
+    </section>
 
-	<script type="text/javascript">
-	    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-	    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-	
-	    try {
-	        var pageTracker = _gat._getTracker("UA-7677054-1");
-	        pageTracker._trackPageview();
-	    }
-	    catch(err) {}
-	</script>    
+    <section class="w-full bg-white sm-px-4 mb-24">
+      <!-- Logo grid -->
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <article class="transition-transform duration-200 hover:-translate-y-[4px] cursor-pointer">
+          <a href="barclays.html">
+            <img src="images/barclays.png" />
+          </a>
+        </article>
+
+        <article class="transition-transform duration-200 hover:-translate-y-[4px] cursor-pointer">
+          <a href="gunvor.html">
+            <img src="images/gunvor.png" />
+          </a>
+        </article>
+
+        <article class="transition-transform duration-200 hover:-translate-y-[4px] cursor-pointer">
+          <a href="saxo.html">
+            <img src="images/saxo.png" />
+          </a>
+        </article>
+
+        <article class="transition-transform duration-200 hover:-translate-y-[4px] cursor-pointer relative">
+          <img src="images/hsbc.png" />
+          <span class="absolute top-2 left-2 rounded-md bg-sky-400 px-2 py-1 text-xs font-medium text-white shadow">
+            Coming Soon
+          </span>
+        </article>
+
+        <article class="transition-transform duration-200 hover:-translate-y-[4px] cursor-pointer relative">
+          <img src="images/iplayer.png" />
+          <span class="absolute top-2 left-2 rounded-md bg-sky-400 px-2 py-1 text-xs font-medium text-white shadow">
+            Coming Soon
+          </span>
+        </article>
+
+        <article class="transition-transform duration-200 hover:-translate-y-[4px] cursor-pointer relative">
+          <img src="images/db.png" />
+          <span class="absolute top-2 left-2 rounded-md bg-sky-400 px-2 py-1 text-xs font-medium text-white shadow">
+            Coming Soon
+          </span>
+        </article>
+      </div>
+    </section>
+
+  
+    <!-- About -->
+    <section class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+      <h2 class="font-serif tracking-tight leading-[56px] text-[48px] md:col-span-1">About me</h2>
+      <div class="md:col-span-2 space-y-4 text-[20px] leading-7 text-slate-700 lg:pr-[24%]">
+        <p>I’m a digital product and service designer with over 20 years of experience leading design, UX, and innovation across global agencies, fintech, and startups.</p>
+        <p>I've worked with dozens of design agencies, helping two open their first offices in London, then spent 15 years shaping the next generation of global trading platforms for major investment banks.</p>
+        <p>I’ve taken three startups from 0–1, most recently my own sustainability startup, growing it to £1M in three years before exiting in 2024.</p>
+        <p>I turn my hand to everything to get things moving and seek out brilliant people as I hand over.</p>
+        <p>I’m a hands-on sleeves rolled up leader and problem solver, obsessed with craft, clarity, and progress.</p>
+        <p>I bridge design, business, product, and engineering - ensuring we meet expectations and deliver work that’s simple, elegant, and world-class.</p>
+        <p>I believe high standards aren’t optional - they’re the difference between the 1% and the rest.</p>
+        <p>From strategy to execution. Let’s play.</p>
+      </div>
+    </section>
+
+    <!-- Tech & tools -->
+    <section class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+      <h2 class="font-serif tracking-tight leading-[56px] text-[48px] md:col-span-1">Tech &amp; tools</h2>
+
+      <div class="md:col-span-2 grid grid-cols-1 gap-8 sm:grid-cols-2">
+        <div>
+          <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Design</h3>
+          <ul class="space-y-1 text-[15px] text-slate-700">
+            <li>Figma</li>
+            <li>Photoshop, Premiere, After Effects</li>
+            <li>Sketch, Zeplin</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Develop</h3>
+          <ul class="space-y-1 text-[15px] text-slate-700">
+            <li>React, JavaScript, TypeScript</li>
+            <li>Tailwind, Sass, HTML</li>
+            <li>NextJS, PHP, MySQL, MongoDB</li>
+            <li>Postman, SQL</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">AI</h3>
+          <ul class="space-y-1 text-[15px] text-slate-700">
+            <li>ChatGPT, Claude, Cursor</li>
+            <li>Runway, Midjourney</li>
+            <li>HuggingFace</li>
+            <li>elevenlabs</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Extras</h3>
+          <ul class="space-y-1 text-[15px] text-slate-700">
+            <li>Design systems &amp; tokens</li>
+            <li>Motion &amp; prototyping</li>
+            <li>Accessibility &amp; performance</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer class="py-20"></footer>
+  </div>
 </body>
+</html>
