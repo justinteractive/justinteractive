@@ -1,0 +1,37 @@
+---
+description: Figma MCP integration rules for this portfolio (Next.js + CSS modules + design tokens)
+alwaysApply: true
+---
+
+# Figma MCP Integration
+
+## Required flow (do not skip)
+
+1. Run `get_design_context` first for the exact Figma node (from URL or node-id).
+2. If truncated, run `get_metadata` then re-fetch specific nodes with `get_design_context`.
+3. Run `get_screenshot` for visual reference.
+4. Run `get_variable_defs` when auditing tokens/primitives.
+5. Adapt output to this project — do not paste React + Tailwind verbatim.
+
+## This project's conventions
+
+- **Framework:** Next.js 14 App Router, TypeScript, CSS Modules
+- **Fonts:** Fraunces (display), Inter (body), Work Sans (nav) — via `app/layout.tsx` CSS variables
+- **Tokens:** `styles/tokens.css` — use semantic vars (`--surface-*`, `--text-*`, `--spacing-*`, etc.)
+- **Per-project colors:** `data/projects.ts` for scroll-screen palettes (bg, headline, text, arrow)
+- **Scroll UI:** `components/ProjectScrollExperience.tsx` — filmstrip, Lenis smooth scroll
+- **Images:** export to `public/images/` and reference in `data/projects.ts`
+
+## Asset rules
+
+- If Figma MCP returns a localhost or remote asset URL for an image/SVG, use that source directly during dev.
+- For committed assets, download and save to `public/images/` (URLs expire ~7 days).
+- Do not add placeholder icons when real Figma assets are available.
+- Do not import new icon libraries when Figma provides the asset.
+
+## Implementation rules
+
+- Replace Tailwind from MCP output with CSS Modules + existing token variables.
+- Reuse existing components before creating new ones.
+- Match Figma layout values (spacing, type scale, radii) to tokens where possible.
+- Validate visually against `get_screenshot` before marking complete.

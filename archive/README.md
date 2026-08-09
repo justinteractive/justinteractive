@@ -1,4 +1,0 @@
-justinteractive
-===============
-
-Personal folio site
