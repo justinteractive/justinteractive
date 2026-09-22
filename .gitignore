@@ -4,3 +4,8 @@ out
 .env*.local
 .DS_Store
 next-env.d.ts
+
+# The Round (apps/the-round) — self-contained sibling app, its own DB/uploads/env
+apps/the-round/data/
+apps/the-round/uploads/
+apps/the-round/.env
