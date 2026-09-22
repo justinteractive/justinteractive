@@ -8,17 +8,16 @@ import {
   primeExitTransition,
   runExitTransition,
   runForwardTransition,
-} from "@/lib/reyoozTransition";
-import {
-  REYOOZ_CASE_STUDY_ENTERED_KEY,
-  REYOOZ_RETURN_HOME_KEY,
-} from "@/data/reyoozCaseStudy";
-import { projects } from "@/data/projects";
+  CASE_STUDY_ENTERED_KEY,
+  CASE_STUDY_RETURN_HOME_KEY,
+} from "@/lib/caseStudyTransition";
+import { projects, type Project } from "@/data/projects";
 import styles from "./CaseStudyTransition.module.css";
 
-const REYOOZ_PROJECT_INDEX = projects.findIndex((p) => p.slug === "reyooz");
+export { CASE_STUDY_ENTERED_KEY, CASE_STUDY_RETURN_HOME_KEY };
 
 type ForwardElements = {
+  project: Project;
   headlineEl: HTMLElement;
   heroEl: HTMLElement;
   fromBg: string;
@@ -28,6 +27,7 @@ type ForwardElements = {
 };
 
 type ExitElements = {
+  project: Project;
   headlineEl: HTMLElement;
   heroEl: HTMLElement;
   caseBg: string;
@@ -38,9 +38,15 @@ type ExitElements = {
 
 function TransitionOverlay({
   overlayRef,
+  project,
 }: {
   overlayRef: RefObject<HTMLDivElement>;
+  project: Project;
 }) {
+  const index = projects.findIndex((p) => p.slug === project.slug);
+  const prevProject = projects[index - 1] ?? project;
+  const nextProject = projects[index + 1] ?? project;
+
   return (
     <div ref={overlayRef} className={styles.overlay} hidden aria-hidden>
       <div className={styles.bg} data-layer="bg" />
@@ -50,33 +56,21 @@ function TransitionOverlay({
           <span>About</span>
         </nav>
         <div className={styles.homeAdjacentHero} data-layer="homePrevHero">
-          <Image
-            src="/images/camio-hero.jpg"
-            alt=""
-            fill
-            sizes="714px"
-          />
+          <Image src={prevProject.image} alt="" fill sizes="714px" />
         </div>
         <div className={styles.homeAdjacentHero} data-layer="homeNextHero">
-          <Image
-            src="/images/barclays-hero.png"
-            alt=""
-            fill
-            sizes="714px"
-          />
+          <Image src={nextProject.image} alt="" fill sizes="714px" />
         </div>
         <div className={styles.homeSlideNav} data-layer="homeSlideNav" aria-hidden>
-          {projects.map((project, index) => {
-            const isActive = index === REYOOZ_PROJECT_INDEX;
+          {projects.map((p, i) => {
+            const isActive = i === index;
             return (
               <span
-                key={project.slug}
+                key={p.slug}
                 className={styles.homeSlideDot}
                 data-active={isActive || undefined}
                 style={{
-                  backgroundColor: isActive
-                    ? project.activeDotColor
-                    : projects[REYOOZ_PROJECT_INDEX]?.dotColor,
+                  backgroundColor: isActive ? p.activeDotColor : project.dotColor,
                 }}
               />
             );
@@ -88,35 +82,20 @@ function TransitionOverlay({
         <span>About</span>
       </nav>
       <div className={styles.hero} data-layer="hero">
-        <Image
-          src="/images/reyooz-hero.jpg"
-          alt=""
-          fill
-          sizes="714px"
-          priority
-        />
+        <Image src={project.image} alt="" fill sizes="714px" priority />
       </div>
       <h1 className={styles.headline} data-layer="headline">
-        Reyooz
+        {project.name}
       </h1>
       <div
         className={styles.homeTextCol}
         data-layer="homeTextCol"
-        style={{
-          color: projects[REYOOZ_PROJECT_INDEX]?.textColor,
-        }}
+        style={{ color: project.textColor }}
       >
-        <p className={styles.homeSubtitle}>
-          {projects[REYOOZ_PROJECT_INDEX]?.description}
-        </p>
+        <p className={styles.homeSubtitle}>{project.description}</p>
         <span className={styles.homeCta}>
           Open Case Study{" "}
-          <span
-            className={styles.homeCtaArrow}
-            style={{
-              color: projects[REYOOZ_PROJECT_INDEX]?.arrowColor,
-            }}
-          >
+          <span className={styles.homeCtaArrow} style={{ color: project.arrowColor }}>
             →
           </span>
         </span>
@@ -126,9 +105,10 @@ function TransitionOverlay({
   );
 }
 
-export function useReyoozCaseStudyTransition() {
+export function useCaseStudyTransition() {
   const router = useRouter();
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const startTransition = useCallback(
@@ -137,6 +117,7 @@ export function useReyoozCaseStudyTransition() {
       const overlay = overlayRef.current;
       if (!overlay) return;
 
+      setActiveProject(elements.project);
       setIsTransitioning(true);
       overlay.hidden = false;
       document.body.style.overflow = "hidden";
@@ -160,8 +141,8 @@ export function useReyoozCaseStudyTransition() {
         toHeadlineColor: elements.toHeadlineColor,
       });
 
-      sessionStorage.setItem(REYOOZ_CASE_STUDY_ENTERED_KEY, "1");
-      router.push("/case-study/reyooz");
+      sessionStorage.setItem(CASE_STUDY_ENTERED_KEY, "1");
+      router.push(`/case-study/${elements.project.slug}`);
     },
     [isTransitioning, router]
   );
@@ -169,13 +150,16 @@ export function useReyoozCaseStudyTransition() {
   return {
     isTransitioning,
     startTransition,
-    TransitionOverlay: <TransitionOverlay overlayRef={overlayRef} />,
+    TransitionOverlay: (
+      <TransitionOverlay overlayRef={overlayRef} project={activeProject} />
+    ),
   };
 }
 
-export function useReyoozCaseStudyExit() {
+export function useCaseStudyExit() {
   const router = useRouter();
   const [isExiting, setIsExiting] = useState(false);
+  const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const startExit = useCallback(
@@ -184,6 +168,7 @@ export function useReyoozCaseStudyExit() {
       const overlay = overlayRef.current;
       if (!overlay) return;
 
+      setActiveProject(elements.project);
       overlay.hidden = false;
       document.body.style.overflow = "hidden";
 
@@ -214,7 +199,7 @@ export function useReyoozCaseStudyExit() {
 
       await runExitTransition(layers, exitInput, ctx);
 
-      sessionStorage.setItem(REYOOZ_RETURN_HOME_KEY, "1");
+      sessionStorage.setItem(CASE_STUDY_RETURN_HOME_KEY, elements.project.slug);
       document.body.style.overflow = "";
       router.push("/", { scroll: false });
     },
@@ -224,6 +209,6 @@ export function useReyoozCaseStudyExit() {
   return {
     isExiting,
     startExit,
-    ExitOverlay: <TransitionOverlay overlayRef={overlayRef} />,
+    ExitOverlay: <TransitionOverlay overlayRef={overlayRef} project={activeProject} />,
   };
 }

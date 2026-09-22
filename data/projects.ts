@@ -59,7 +59,7 @@ export const projects: Project[] = [
     slug: "barclays",
     name: "Barclays",
     ...theme("barclays"),
-    description: "A new AI powered banking experience for colleagues and employees, built on a modern, flexible platform.",
+    description: "A new AI powered banking experience for colleagues and employees. Consolidating the global HR content and services into a single, centralised platform.",
     image: "/images/barclays-hero.png",
   },
   {
@@ -91,3 +91,18 @@ export const projects: Project[] = [
     image: "/images/sedition-hero.jpg"
   },
 ];
+
+/**
+ * Bg/headline colors for a project's case study hero band. Most projects reuse
+ * their homepage colors as-is; Reyooz's case study page uses a deliberately
+ * inverted palette as its distinct brand treatment.
+ */
+export function getCaseStudyThemeColors(project: Project) {
+  if (project.slug === "reyooz") {
+    return {
+      bg: "var(--color-reyooz-headline)",
+      headline: "var(--color-reyooz-surface)",
+    };
+  }
+  return { bg: project.bgColor, headline: project.headlineColor };
+}

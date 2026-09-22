@@ -4,10 +4,17 @@ import {
   CASE_STUDY_TRANSITION_MS,
   EXIT_ADJACENT_HERO_SLIDE_PX,
   getExitSubtitleFadeT,
-  getReyoozCaseStudyLayout,
-  getReyoozAdjacentHeroLayout,
-  getReyoozHomeLayout,
+  getCaseStudyHeroLayout,
+  getAdjacentHeroLayout,
+  getHomeHeroLayout,
 } from "@/lib/motion";
+
+/** sessionStorage keys used to skip re-playing the enter/exit animation on refresh/back-forward nav. */
+export const CASE_STUDY_ENTERED_KEY = "case-study-entered";
+export const CASE_STUDY_RETURN_HOME_KEY = "case-study-return-home";
+
+/** Below this viewport width the homepage filmstrip scrolls horizontally, not vertically. */
+const HOME_MOBILE_BREAKPOINT = 640;
 
 type Rect = { left: number; top: number; width: number; height: number };
 
@@ -90,7 +97,7 @@ export async function runForwardTransition(
   layers: OverlayLayers,
   input: ForwardTransitionInput
 ) {
-  const caseLayout = getReyoozCaseStudyLayout(window.innerWidth);
+  const caseLayout = getCaseStudyHeroLayout(window.innerWidth, window.innerHeight);
 
   applyHeadlineFrame(
     layers.headline,
@@ -163,6 +170,8 @@ export function primeExitTransition(
   layers: OverlayLayers,
   input: ExitTransitionInput
 ) {
+  const isMobile = window.innerWidth <= HOME_MOBILE_BREAKPOINT;
+
   applyHeadlineFrame(
     layers.headline,
     input.headlineFrom.left,
@@ -173,34 +182,45 @@ export function primeExitTransition(
   layers.bg.style.backgroundColor = input.caseBg;
   layers.headline.style.color = input.caseHeadlineColor;
   layers.nav.style.opacity = "1";
-  layers.content.style.top = `${getReyoozCaseStudyLayout(window.innerWidth).heroBandHeight}px`;
+  layers.content.style.top = `${
+    getCaseStudyHeroLayout(window.innerWidth, window.innerHeight).heroBandHeight
+  }px`;
   layers.content.style.bottom = "0";
   layers.content.style.left = "0";
   layers.content.style.right = "0";
   layers.content.style.opacity = "1";
   layers.content.style.transform = "translateX(0)";
+  layers.homeReveal.style.backgroundColor = input.homeBg;
   layers.homeReveal.style.opacity = "0";
   layers.homeReveal.style.transform = "translateX(72px)";
   layers.homePrevHero.style.opacity = "0";
-  layers.homePrevHero.style.transform = `translateY(${-EXIT_ADJACENT_HERO_SLIDE_PX}px)`;
   layers.homeNextHero.style.opacity = "0";
-  layers.homeNextHero.style.transform = `translateY(${EXIT_ADJACENT_HERO_SLIDE_PX}px)`;
   layers.homeSlideNav.style.opacity = "0";
 
-  const homeLayout = getReyoozHomeLayout(window.innerWidth, window.innerHeight);
+  const homeLayout = getHomeHeroLayout(window.innerWidth, window.innerHeight);
   applyTextColFrame(layers.homeTextCol, homeLayout.subtitle);
   layers.homeTextCol.style.opacity = "0";
 
-  const adjacentLayout = getReyoozAdjacentHeroLayout(
+  const adjacentLayout = getAdjacentHeroLayout(
     window.innerWidth,
     window.innerHeight
   );
   applyHeroFrame(layers.homePrevHero, adjacentLayout.prev);
   applyHeroFrame(layers.homeNextHero, adjacentLayout.next);
 
+  // Mobile filmstrip peeks in from left/right; desktop peeks from above/below.
+  if (isMobile) {
+    layers.homePrevHero.style.transform = `translateX(${-EXIT_ADJACENT_HERO_SLIDE_PX}px)`;
+    layers.homeNextHero.style.transform = `translateX(${EXIT_ADJACENT_HERO_SLIDE_PX}px)`;
+  } else {
+    layers.homePrevHero.style.transform = `translateY(${-EXIT_ADJACENT_HERO_SLIDE_PX}px)`;
+    layers.homeNextHero.style.transform = `translateY(${EXIT_ADJACENT_HERO_SLIDE_PX}px)`;
+  }
+
   return {
     homeLayout,
     adjacentLayout,
+    isMobile,
   };
 }
 
@@ -209,7 +229,7 @@ type ExitTransitionContext = ReturnType<typeof primeExitTransition>;
 async function animateExitTransition(
   layers: OverlayLayers,
   input: ExitTransitionInput,
-  { homeLayout, adjacentLayout }: ExitTransitionContext
+  { homeLayout, adjacentLayout, isMobile }: ExitTransitionContext
 ) {
   await animate(CASE_STUDY_TRANSITION_MS, (t) => {
     layers.bg.style.backgroundColor = lerpColor(input.caseBg, input.homeBg, t);
@@ -247,16 +267,17 @@ async function animateExitTransition(
     layers.homeReveal.style.transform = `translateX(${72 - 72 * t}px)`;
 
     const adjacentT = Math.min(1, Math.max(0, (t - 0.2) / 0.75));
+    const slideAxis = isMobile ? "translateX" : "translateY";
     layers.homePrevHero.style.opacity = String(
       adjacentLayout.prev.opacity * adjacentT
     );
-    layers.homePrevHero.style.transform = `translateY(${
+    layers.homePrevHero.style.transform = `${slideAxis}(${
       -EXIT_ADJACENT_HERO_SLIDE_PX * (1 - adjacentT)
     }px)`;
     layers.homeNextHero.style.opacity = String(
       adjacentLayout.next.opacity * adjacentT
     );
-    layers.homeNextHero.style.transform = `translateY(${
+    layers.homeNextHero.style.transform = `${slideAxis}(${
       EXIT_ADJACENT_HERO_SLIDE_PX * (1 - adjacentT)
     }px)`;
     layers.homeSlideNav.style.opacity = String(adjacentT);

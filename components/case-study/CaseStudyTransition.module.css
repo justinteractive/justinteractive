@@ -63,7 +63,7 @@
 .homeReveal {
   position: absolute;
   inset: 0;
-  background: var(--color-reyooz-surface);
+  /* background-color is set inline per-project by lib/caseStudyTransition.ts */
   opacity: 0;
   transform: translateX(72px);
   will-change: transform, opacity;
@@ -173,4 +173,42 @@
   transform: translateX(-56px);
   will-change: transform, opacity;
   z-index: 2;
+}
+
+/* Mirrors CaseStudyPage/ReyoozCaseStudy's <=768 nav gutter and
+   ProjectScrollExperience's <=640 mobile nav/dots layout. */
+@media (max-width: 768px) {
+  .nav {
+    left: var(--spacing-5, 20px);
+    right: var(--spacing-5, 20px);
+  }
+}
+
+@media (max-width: 640px) {
+  .homeNav {
+    top: 16px;
+    left: var(--spacing-6, 24px);
+    right: var(--spacing-6, 24px);
+  }
+
+  .homeSlideNav {
+    top: 44px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    width: auto;
+  }
+
+  .homeSubtitle {
+    font-size: var(--font-size-lg, 18px);
+    line-height: var(--line-height-base, 24px);
+  }
+
+  .homeCta {
+    font-size: var(--font-size-sm, 14px);
+    line-height: normal;
+  }
 }

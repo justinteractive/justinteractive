@@ -113,6 +113,3 @@ export const reyoozCaseStudySections: CaseStudySection[] = [
     ],
   },
 ];
-
-export const REYOOZ_CASE_STUDY_ENTERED_KEY = "reyooz-case-study-entered";
-export const REYOOZ_RETURN_HOME_KEY = "reyooz-return-home";

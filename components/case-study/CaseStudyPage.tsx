@@ -1,5 +1,7 @@
-import Link from "next/link";
-import type { CSSProperties } from "react";
+"use client";
+
+import Image from "next/image";
+import { useRef, type CSSProperties } from "react";
 import type { Project } from "@/data/projects";
 import CaseStudyContent from "@/components/case-study/CaseStudyContent";
 import type { CaseStudySection } from "@/data/caseStudyTypes";
@@ -8,6 +10,12 @@ import styles from "./CaseStudyPage.module.css";
 type Props = {
   project: Project;
   sections?: CaseStudySection[];
+  animateIn?: boolean;
+  isExiting?: boolean;
+  onBackHome?: (
+    headlineEl: HTMLElement | null,
+    heroEl: HTMLElement | null
+  ) => void;
 };
 
 function placeholderSections(project: Project): CaseStudySection[] {
@@ -22,12 +30,22 @@ function placeholderSections(project: Project): CaseStudySection[] {
   ];
 }
 
-export default function CaseStudyPage({ project, sections }: Props) {
+export default function CaseStudyPage({
+  project,
+  sections,
+  animateIn = false,
+  isExiting = false,
+  onBackHome,
+}: Props) {
   const contentSections = sections ?? placeholderSections(project);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   return (
     <main
-      className={styles.page}
+      className={`${styles.page} ${animateIn ? styles.pageAnimateIn : ""} ${
+        isExiting ? styles.pageExiting : ""
+      }`}
       style={
         {
           "--case-study-hero-bg": project.bgColor,
@@ -38,14 +56,41 @@ export default function CaseStudyPage({ project, sections }: Props) {
     >
       <div className={styles.heroBand}>
         <nav className={styles.nav}>
-          <Link href="/">← Back Home</Link>
+          {onBackHome ? (
+            <button
+              type="button"
+              className={styles.backHome}
+              onClick={() => onBackHome(headlineRef.current, heroRef.current)}
+              disabled={isExiting}
+            >
+              ← Back Home
+            </button>
+          ) : (
+            <span>← Back Home</span>
+          )}
           <span>About</span>
         </nav>
 
-        <h1 className={styles.heroTitle}>{project.name}</h1>
+        <div ref={heroRef} className={styles.heroWindow}>
+          <Image
+            src={project.image}
+            alt={project.name}
+            fill
+            sizes="714px"
+            className={styles.heroImage}
+            priority
+          />
+        </div>
+
+        <h1 ref={headlineRef} className={styles.heroTitle}>
+          {project.name}
+        </h1>
       </div>
 
-      <CaseStudyContent sections={contentSections} />
+      <CaseStudyContent
+        sections={contentSections}
+        className={animateIn ? styles.contentAnimateIn : undefined}
+      />
     </main>
   );
 }
