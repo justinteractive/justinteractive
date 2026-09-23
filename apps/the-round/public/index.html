@@ -14,74 +14,87 @@
 
 <div id="app">
 
-  <!-- Top bar: app name, AM/PM toggle, tab chips -->
-  <header class="topbar">
-    <div class="topbar-row">
-      <span class="app-name">The Round</span>
-      <div class="mode-toggle" role="group" aria-label="Route mode">
-        <button type="button" class="mode-btn" data-mode="am">Collect</button>
-        <button type="button" class="mode-btn" data-mode="pm">Return</button>
+  <!-- ============ Calendar (root) screen ============ -->
+  <section id="calendarScreen" class="screen">
+    <header class="topbar">
+      <div class="topbar-row">
+        <span class="app-name">The Round</span>
+        <button type="button" class="icon-btn" id="manageDogsBtn" aria-label="Manage dogs">🐾</button>
       </div>
-    </div>
-    <div class="tabs" role="tablist">
-      <button type="button" class="tab-chip" data-tab="all" role="tab">All dogs</button>
-      <button type="button" class="tab-chip" data-tab="route" role="tab">
-        Today's route <span class="route-count" id="routeCount">0</span>
-      </button>
-    </div>
-  </header>
-
-  <main id="mainContent">
-
-    <!-- ============ All dogs tab ============ -->
-    <section id="allDogsTab" class="tab-panel">
-      <div class="search-row">
-        <input type="search" id="searchInput" placeholder="Search name, address or postcode…" autocomplete="off" />
-        <button type="button" id="selectToggleBtn" class="text-btn">Select</button>
+      <div class="week-nav">
+        <button type="button" class="icon-btn" id="prevWeekBtn" aria-label="Previous week">‹</button>
+        <button type="button" class="week-label" id="weekLabel">This week</button>
+        <button type="button" class="icon-btn" id="nextWeekBtn" aria-label="Next week">›</button>
       </div>
-      <ul id="dogList" class="dog-list"></ul>
-    </section>
+    </header>
 
-    <!-- ============ Today's route tab ============ -->
-    <section id="routeTab" class="tab-panel" hidden>
-      <div class="route-actions">
-        <button type="button" id="sortNearbyBtn" class="chip-btn">Sort by nearby</button>
-        <button type="button" id="openMapsBtn" class="chip-btn">Open in Maps</button>
-        <button type="button" id="flipModeBtn" class="chip-btn">Flip to PM</button>
+    <main id="agendaList" class="agenda-list"></main>
+
+    <button type="button" id="newRunFab" class="fab" aria-label="New run">+</button>
+  </section>
+
+  <!-- ============ Run detail screen ============ -->
+  <section id="runScreen" class="screen" hidden>
+    <header class="topbar">
+      <div class="topbar-row">
+        <button type="button" class="icon-btn" id="runBackBtn" aria-label="Back to calendar">←</button>
+        <button type="button" class="kebab-btn kebab-btn--light" id="runKebabBtn" data-action="kebab-run" aria-label="Run options">⋮</button>
       </div>
-      <p class="hint-text">
-        "Sort by nearby" clusters stops by postcode-district centroid — a
-        rough geographic grouping, not live traffic routing.
-      </p>
-      <p class="hint-text" id="mapsLimitHint" hidden></p>
-      <ol id="routeList" class="dog-list route-list"></ol>
-      <p id="routeEmptyState" class="empty-state" hidden>
-        No stops yet. Add dogs from the All dogs tab.
-      </p>
-    </section>
+      <div class="run-heading">
+        <input type="text" id="runTitleInput" class="run-title-input" />
+        <input type="date" id="runDateInput" class="run-date-input" />
+      </div>
+    </header>
 
-  </main>
+    <main id="runMain" class="run-main">
+      <ol id="runStopsList" class="dog-list route-list"></ol>
+      <p id="runEmptyState" class="empty-state" hidden>No dogs added yet.</p>
+      <div class="run-actions">
+        <button type="button" id="addDogsBtn" class="secondary-btn" style="width:100%;">+ Add dogs</button>
+      </div>
+    </main>
+  </section>
 
-  <!-- Sticky select-mode bar (All dogs tab) -->
-  <div id="selectBar" class="sticky-bar" hidden>
-    <span id="selectCount">0 selected</span>
-    <div class="sticky-bar-actions">
-      <button type="button" id="selectCancelBtn" class="text-btn">Cancel</button>
-      <button type="button" id="selectAddBtn" class="primary-btn">Add to route</button>
-    </div>
-  </div>
+  <!-- ============ Add dogs to run screen ============ -->
+  <section id="addDogsScreen" class="screen" hidden>
+    <header class="topbar">
+      <div class="topbar-row">
+        <button type="button" class="icon-btn" id="addDogsBackBtn" aria-label="Done">← Done</button>
+        <span class="screen-title" id="addDogsRunTitle">Add dogs</span>
+      </div>
+      <div class="search-row search-row--dark">
+        <input type="search" id="addDogsSearch" placeholder="Search name, address or postcode…" autocomplete="off" />
+      </div>
+    </header>
+    <main class="agenda-list">
+      <ul id="pickerDogList" class="dog-list"></ul>
+    </main>
+  </section>
 
-  <!-- Sticky save bar (Today's route tab) -->
-  <div id="saveBar" class="sticky-bar" hidden>
-    <span id="saveStatus">Not saved yet</span>
-    <button type="button" id="saveRouteBtn" class="primary-btn">Save route</button>
-  </div>
-
-  <!-- Floating add-dog button -->
-  <button type="button" id="addDogFab" class="fab" aria-label="Add dog" hidden>+</button>
+  <!-- ============ Manage dogs (global) screen ============ -->
+  <section id="manageDogsScreen" class="screen" hidden>
+    <header class="topbar">
+      <div class="topbar-row">
+        <button type="button" class="icon-btn" id="manageDogsBackBtn" aria-label="Back to calendar">←</button>
+        <span class="screen-title">All dogs</span>
+      </div>
+      <div class="search-row search-row--dark">
+        <input type="search" id="manageDogsSearch" placeholder="Search name, address or postcode…" autocomplete="off" />
+      </div>
+    </header>
+    <main class="agenda-list">
+      <ul id="manageDogList" class="dog-list"></ul>
+    </main>
+    <button type="button" id="addDogFab" class="fab" aria-label="Add dog">+</button>
+  </section>
 
   <!-- Kebab context menu (anchored dynamically) -->
   <div id="contextMenu" class="context-menu" hidden></div>
+
+  <!-- New run sheet -->
+  <div id="newRunOverlay" class="overlay" hidden>
+    <div class="sheet" id="newRunSheet" role="dialog" aria-modal="true"></div>
+  </div>
 
   <!-- Dog detail sheet -->
   <div id="detailOverlay" class="overlay" hidden>

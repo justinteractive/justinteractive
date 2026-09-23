@@ -7,7 +7,7 @@ const express = require("express");
 const db = require("./db");
 const { seedIfEmpty } = require("./seed/seed");
 const dogsRouter = require("./routes/dogs");
-const routeRouter = require("./routes/route");
+const runsRouter = require("./routes/runs");
 
 const PORT = process.env.PORT || 4100;
 const UPLOADS_DIR = path.resolve(
@@ -106,7 +106,7 @@ app.use(express.static(PUBLIC_DIR));
 app.use("/uploads", express.static(UPLOADS_DIR));
 
 app.use("/api/dogs", dogsRouter);
-app.use("/api/routes", routeRouter);
+app.use("/api/runs", runsRouter);
 
 app.use("/api", (_req, res) => {
   res.status(404).json({ error: "Not found" });

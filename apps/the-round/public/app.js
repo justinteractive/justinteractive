@@ -5,45 +5,52 @@
   // Constants
   // -------------------------------------------------------------------
   const MAX_MAPS_WAYPOINTS = 10; // Google Maps deep-link practical limit.
+  const DAY_NAMES = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+  const MONTH_NAMES = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
 
-  // Rough centroids for "sort by nearby" — a coarse district-level
-  // approximation, not real geocoding/routing.
-  const DISTRICT_CENTROIDS = {
-    CT1: { lat: 51.2802, lng: 1.0789 },
-    CT2: { lat: 51.2917, lng: 1.073 },
-    CT3: { lat: 51.3103, lng: 1.169 },
-    CT4: { lat: 51.247, lng: 1.045 },
-    ME13: { lat: 51.314, lng: 0.893 },
-  };
-  const DEPOT = { lat: 51.2796, lng: 1.0827 }; // Canterbury depot fallback.
-
+  // Rough centroids for per-stop sorting context (kept for maps links only).
   // -------------------------------------------------------------------
   // DOM refs
   // -------------------------------------------------------------------
+  const screens = {
+    calendar: document.getElementById("calendarScreen"),
+    run: document.getElementById("runScreen"),
+    "add-dogs": document.getElementById("addDogsScreen"),
+    "manage-dogs": document.getElementById("manageDogsScreen"),
+  };
+
   const els = {
-    modeButtons: document.querySelectorAll(".mode-btn"),
-    tabButtons: document.querySelectorAll(".tab-chip"),
-    routeCount: document.getElementById("routeCount"),
-    allDogsTab: document.getElementById("allDogsTab"),
-    routeTab: document.getElementById("routeTab"),
-    searchInput: document.getElementById("searchInput"),
-    selectToggleBtn: document.getElementById("selectToggleBtn"),
-    dogList: document.getElementById("dogList"),
-    routeList: document.getElementById("routeList"),
-    routeEmptyState: document.getElementById("routeEmptyState"),
-    sortNearbyBtn: document.getElementById("sortNearbyBtn"),
-    openMapsBtn: document.getElementById("openMapsBtn"),
-    flipModeBtn: document.getElementById("flipModeBtn"),
-    mapsLimitHint: document.getElementById("mapsLimitHint"),
-    selectBar: document.getElementById("selectBar"),
-    selectCount: document.getElementById("selectCount"),
-    selectCancelBtn: document.getElementById("selectCancelBtn"),
-    selectAddBtn: document.getElementById("selectAddBtn"),
-    saveBar: document.getElementById("saveBar"),
-    saveStatus: document.getElementById("saveStatus"),
-    saveRouteBtn: document.getElementById("saveRouteBtn"),
+    manageDogsBtn: document.getElementById("manageDogsBtn"),
+    prevWeekBtn: document.getElementById("prevWeekBtn"),
+    nextWeekBtn: document.getElementById("nextWeekBtn"),
+    weekLabel: document.getElementById("weekLabel"),
+    agendaList: document.getElementById("agendaList"),
+    newRunFab: document.getElementById("newRunFab"),
+
+    runBackBtn: document.getElementById("runBackBtn"),
+    runKebabBtn: document.getElementById("runKebabBtn"),
+    runTitleInput: document.getElementById("runTitleInput"),
+    runDateInput: document.getElementById("runDateInput"),
+    runStopsList: document.getElementById("runStopsList"),
+    runEmptyState: document.getElementById("runEmptyState"),
+    addDogsBtn: document.getElementById("addDogsBtn"),
+
+    addDogsBackBtn: document.getElementById("addDogsBackBtn"),
+    addDogsRunTitle: document.getElementById("addDogsRunTitle"),
+    addDogsSearch: document.getElementById("addDogsSearch"),
+    pickerDogList: document.getElementById("pickerDogList"),
+
+    manageDogsBackBtn: document.getElementById("manageDogsBackBtn"),
+    manageDogsSearch: document.getElementById("manageDogsSearch"),
+    manageDogList: document.getElementById("manageDogList"),
     addDogFab: document.getElementById("addDogFab"),
+
     contextMenu: document.getElementById("contextMenu"),
+    newRunOverlay: document.getElementById("newRunOverlay"),
+    newRunSheet: document.getElementById("newRunSheet"),
     detailOverlay: document.getElementById("detailOverlay"),
     detailSheet: document.getElementById("detailSheet"),
     addOverlay: document.getElementById("addOverlay"),
@@ -56,18 +63,53 @@
   // -------------------------------------------------------------------
   const state = {
     dogs: [],
-    routes: {
-      am: { dogIds: [], savedAt: null },
-      pm: { dogIds: [], savedAt: null },
-    },
-    routeDirty: { am: false, pm: false },
-    currentMode: localStorage.getItem("theround.mode") === "pm" ? "pm" : "am",
-    activeTab: "all",
-    search: "",
-    showArchived: false,
-    selectMode: false,
-    selectedIds: new Set(),
+    runs: [],
+    screen: "calendar",
+    weekStart: startOfWeek(new Date()),
+    currentRunId: null,
+    manageDogsSearch: "",
+    manageDogsShowArchived: false,
+    addDogsSearch: "",
   };
+
+  // -------------------------------------------------------------------
+  // Date helpers
+  // -------------------------------------------------------------------
+  function startOfWeek(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    const day = d.getDay(); // 0 = Sunday
+    const diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return d;
+  }
+
+  function addDays(date, n) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + n);
+    return d;
+  }
+
+  function toISODate(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function isSameDate(a, b) {
+    return toISODate(a) === toISODate(b);
+  }
+
+  function formatWeekRangeLabel(weekStart) {
+    const weekEnd = addDays(weekStart, 6);
+    const sameMonth = weekStart.getMonth() === weekEnd.getMonth();
+    const startStr = `${weekStart.getDate()} ${MONTH_NAMES[weekStart.getMonth()]}`;
+    const endStr = sameMonth
+      ? `${weekEnd.getDate()}`
+      : `${weekEnd.getDate()} ${MONTH_NAMES[weekEnd.getMonth()]}`;
+    return `${startStr} – ${endStr}`;
+  }
 
   // -------------------------------------------------------------------
   // API
@@ -115,19 +157,43 @@
       if (!res.ok) throw await apiError(res);
       return res.json();
     },
-    async getRoute(mode) {
-      const res = await fetch(`api/routes/${mode}`);
-      if (!res.ok) throw new Error("Failed to load route");
+    async getRuns() {
+      const res = await fetch("api/runs");
+      if (!res.ok) throw new Error("Failed to load runs");
       return res.json();
     },
-    async putRoute(mode, dogIds) {
-      const res = await fetch(`api/routes/${mode}`, {
+    async createRun(payload) {
+      const res = await fetch("api/runs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw await apiError(res);
+      return res.json();
+    },
+    async patchRun(id, payload) {
+      const res = await fetch(`api/runs/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw await apiError(res);
+      return res.json();
+    },
+    async putRunStops(id, dogIds) {
+      const res = await fetch(`api/runs/${encodeURIComponent(id)}/stops`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dogIds }),
       });
       if (!res.ok) throw await apiError(res);
       return res.json();
+    },
+    async deleteRun(id) {
+      const res = await fetch(`api/runs/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      if (!res.ok && res.status !== 204) throw await apiError(res);
     },
   };
 
@@ -177,28 +243,16 @@
     };
   }
 
-  function haversine(a, b) {
-    const R = 6371;
-    const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-    const dLng = ((b.lng - a.lng) * Math.PI) / 180;
-    const lat1 = (a.lat * Math.PI) / 180;
-    const lat2 = (b.lat * Math.PI) / 180;
-    const h =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(h));
-  }
-
-  function centroidFor(dog) {
-    return DISTRICT_CENTROIDS[dog.district] || DEPOT;
-  }
-
   function dogById(id) {
     return state.dogs.find((d) => d.id === id);
   }
 
-  function currentRoute() {
-    return state.routes[state.currentMode];
+  function runById(id) {
+    return state.runs.find((r) => r.id === id);
+  }
+
+  function currentRun() {
+    return runById(state.currentRunId);
   }
 
   function toast(message) {
@@ -231,43 +285,6 @@
     return `https://www.google.com/maps/dir/?${params.toString()}`;
   }
 
-  // -------------------------------------------------------------------
-  // Rendering — top bar
-  // -------------------------------------------------------------------
-  function renderTopBar() {
-    els.modeButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.mode === state.currentMode);
-    });
-    els.tabButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.tab === state.activeTab);
-    });
-    els.routeCount.textContent = String(currentRoute().dogIds.length);
-
-    els.allDogsTab.hidden = state.activeTab !== "all";
-    els.routeTab.hidden = state.activeTab !== "route";
-    els.addDogFab.hidden = state.activeTab !== "all" || state.selectMode;
-
-    els.flipModeBtn.textContent =
-      state.currentMode === "am" ? "Flip to PM route" : "Flip to AM route";
-  }
-
-  // -------------------------------------------------------------------
-  // Rendering — All dogs tab
-  // -------------------------------------------------------------------
-  function filteredDogs() {
-    const q = state.search.trim().toLowerCase();
-    return state.dogs
-      .filter((d) => state.showArchived || !d.archived)
-      .filter((d) => {
-        if (!q) return true;
-        return (
-          d.name.toLowerCase().includes(q) ||
-          d.address.toLowerCase().includes(q) ||
-          (d.postcode || "").toLowerCase().includes(q)
-        );
-      });
-  }
-
   function dogAvatarHtml(dog) {
     if (dog.photoPath) {
       return `<img class="dog-avatar" src="${escapeHtml(dog.photoPath)}" alt="" />`;
@@ -276,67 +293,86 @@
     return `<div class="dog-avatar">${escapeHtml(initial)}</div>`;
   }
 
-  function renderAllDogsTab() {
-    const dogs = filteredDogs();
-    const routeIds = new Set(currentRoute().dogIds);
-
-    if (dogs.length === 0) {
-      els.dogList.innerHTML = `<li class="empty-state">No dogs match your search.</li>`;
-      return;
-    }
-
-    els.dogList.innerHTML = dogs
-      .map((dog) => {
-        const rowClasses = ["dog-row"];
-        if (routeIds.has(dog.id) && !dog.archived) rowClasses.push("in-route");
-        if (dog.archived) rowClasses.push("archived");
-
-        const checkbox = state.selectMode
-          ? `<input type="checkbox" class="dog-checkbox" data-select-id="${dog.id}" ${
-              state.selectedIds.has(dog.id) ? "checked" : ""
-            } ${dog.archived ? "disabled" : ""} />`
-          : "";
-
-        const keysafe = dog.keysafe
-          ? `<span class="keysafe-chip mono" title="Keysafe code">${escapeHtml(dog.keysafe)}</span>`
-          : "";
-
-        return `
-          <li class="${rowClasses.join(" ")}" data-dog-id="${dog.id}">
-            ${checkbox}
-            ${dogAvatarHtml(dog)}
-            <button type="button" class="dog-main" data-action="open-detail" data-dog-id="${dog.id}">
-              <div class="dog-name">
-                ${escapeHtml(dog.name)}
-                <span class="size-badge">${escapeHtml(dog.size)}</span>
-              </div>
-              <div class="dog-address">${escapeHtml(dog.address)}${
-                dog.postcode ? " · " + escapeHtml(dog.postcode) : ""
-              }</div>
-            </button>
-            ${keysafe}
-            <button type="button" class="kebab-btn" data-action="kebab-all" data-dog-id="${dog.id}" aria-label="More options">⋮</button>
-          </li>
-        `;
-      })
-      .join("");
+  // -------------------------------------------------------------------
+  // Screen navigation
+  // -------------------------------------------------------------------
+  function switchScreen(name) {
+    state.screen = name;
+    Object.entries(screens).forEach(([key, el]) => {
+      el.hidden = key !== name;
+    });
+    window.scrollTo(0, 0);
   }
 
   // -------------------------------------------------------------------
-  // Rendering — Today's route tab
+  // Calendar screen
   // -------------------------------------------------------------------
-  function renderRouteTab() {
-    const route = currentRoute();
-    const dogs = route.dogIds.map((id) => dogById(id)).filter(Boolean);
+  function renderCalendar() {
+    els.weekLabel.textContent = formatWeekRangeLabel(state.weekStart);
+    const today = new Date();
 
-    els.routeEmptyState.hidden = dogs.length > 0;
-    els.routeList.hidden = dogs.length === 0;
-    els.mapsLimitHint.hidden = dogs.length <= MAX_MAPS_WAYPOINTS;
-    if (dogs.length > MAX_MAPS_WAYPOINTS) {
-      els.mapsLimitHint.textContent = `"Open in Maps" only supports the first ${MAX_MAPS_WAYPOINTS} stops — Google Maps' deep-link waypoint limit.`;
+    let html = "";
+    for (let i = 0; i < 7; i++) {
+      const day = addDays(state.weekStart, i);
+      const dateStr = toISODate(day);
+      const dayRuns = state.runs.filter((r) => r.date === dateStr);
+      const todayClass = isSameDate(day, today) ? " is-today" : "";
+
+      const runsHtml = dayRuns.length
+        ? dayRuns
+            .map(
+              (run) => `
+          <button type="button" class="run-pill color-${run.color}" data-run-id="${run.id}">
+            <div class="run-pill-title">${escapeHtml(run.title)}</div>
+            <div class="run-pill-meta">${run.dogIds.length} dog${run.dogIds.length === 1 ? "" : "s"}</div>
+          </button>`
+            )
+            .join("")
+        : `<div class="day-empty-hint">No runs</div>`;
+
+      html += `
+        <div class="day-row${todayClass}">
+          <div class="day-col">
+            <div class="day-name">${DAY_NAMES[i]}</div>
+            <div class="day-number">${day.getDate()}</div>
+          </div>
+          <div class="day-runs">${runsHtml}</div>
+        </div>
+      `;
     }
+    els.agendaList.innerHTML = html;
+  }
 
-    els.routeList.innerHTML = dogs
+  function changeWeek(delta) {
+    state.weekStart = addDays(state.weekStart, delta * 7);
+    renderCalendar();
+  }
+
+  // -------------------------------------------------------------------
+  // Run detail screen
+  // -------------------------------------------------------------------
+  function openRun(runId) {
+    state.currentRunId = runId;
+    renderRunScreen();
+    switchScreen("run");
+  }
+
+  function renderRunScreen() {
+    const run = currentRun();
+    if (!run) {
+      switchScreen("calendar");
+      return;
+    }
+    if (document.activeElement !== els.runTitleInput) {
+      els.runTitleInput.value = run.title;
+    }
+    els.runDateInput.value = run.date;
+
+    const dogs = run.dogIds.map(dogById).filter(Boolean);
+    els.runEmptyState.hidden = dogs.length > 0;
+    els.runStopsList.hidden = dogs.length === 0;
+
+    els.runStopsList.innerHTML = dogs
       .map((dog, index) => {
         const rowClasses = ["dog-row"];
         if (dog.keysafe) rowClasses.push("flagged");
@@ -355,52 +391,191 @@
               <button type="button" class="reorder-btn" data-action="move-up" data-dog-id="${dog.id}" ${index === 0 ? "disabled" : ""}>▲</button>
               <button type="button" class="reorder-btn" data-action="move-down" data-dog-id="${dog.id}" ${index === dogs.length - 1 ? "disabled" : ""}>▼</button>
             </div>
-            <button type="button" class="kebab-btn" data-action="kebab-route" data-dog-id="${dog.id}" aria-label="More options">⋮</button>
+            <button type="button" class="kebab-btn" data-action="kebab-run-stop" data-dog-id="${dog.id}" aria-label="More options">⋮</button>
           </li>
         `;
       })
       .join("");
-
-    renderSaveBar();
   }
 
-  function renderSaveBar() {
-    const dirty = state.routeDirty[state.currentMode];
-    const route = currentRoute();
-    els.saveBar.hidden = state.activeTab !== "route" || route.dogIds.length === 0;
-    els.saveRouteBtn.disabled = !dirty;
-    if (dirty) {
-      els.saveStatus.textContent = "Unsaved changes";
-    } else if (route.savedAt) {
-      els.saveStatus.textContent = `Saved ${formatDateTime(route.savedAt)}`;
-    } else {
-      els.saveStatus.textContent = "Not saved yet";
+  async function saveRunStops(run) {
+    try {
+      await api.putRunStops(run.id, run.dogIds);
+    } catch (err) {
+      toast(err.message || "Failed to save run");
+    }
+    renderCalendar();
+  }
+
+  function moveInRun(dogId, direction) {
+    const run = currentRun();
+    if (!run) return;
+    const idx = run.dogIds.indexOf(dogId);
+    const swapWith = idx + direction;
+    if (idx === -1 || swapWith < 0 || swapWith >= run.dogIds.length) return;
+    [run.dogIds[idx], run.dogIds[swapWith]] = [run.dogIds[swapWith], run.dogIds[idx]];
+    renderRunScreen();
+    saveRunStops(run);
+  }
+
+  function removeFromRun(dogId) {
+    const run = currentRun();
+    if (!run) return;
+    run.dogIds = run.dogIds.filter((id) => id !== dogId);
+    renderRunScreen();
+    saveRunStops(run);
+    toast("Removed from run");
+  }
+
+  async function deleteCurrentRun() {
+    const run = currentRun();
+    if (!run) return;
+    const ok = confirm(`Delete "${run.title}"? This can't be undone.`);
+    if (!ok) return;
+    try {
+      await api.deleteRun(run.id);
+      state.runs = state.runs.filter((r) => r.id !== run.id);
+      switchScreen("calendar");
+      renderCalendar();
+      toast("Run deleted");
+    } catch (err) {
+      toast(err.message || "Failed to delete run");
     }
   }
 
-  function markDirty() {
-    state.routeDirty[state.currentMode] = true;
-    renderSaveBar();
-    renderTopBar();
+  // -------------------------------------------------------------------
+  // Add dogs to run screen
+  // -------------------------------------------------------------------
+  function openAddDogsScreen() {
+    const run = currentRun();
+    if (!run) return;
+    state.addDogsSearch = "";
+    els.addDogsSearch.value = "";
+    els.addDogsRunTitle.textContent = run.title;
+    renderPickerList();
+    switchScreen("add-dogs");
+  }
+
+  function renderPickerList() {
+    const run = currentRun();
+    if (!run) return;
+    const q = state.addDogsSearch.trim().toLowerCase();
+    const dogs = state.dogs
+      .filter((d) => !d.archived)
+      .filter((d) => {
+        if (!q) return true;
+        return (
+          d.name.toLowerCase().includes(q) ||
+          d.address.toLowerCase().includes(q) ||
+          (d.postcode || "").toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+    if (dogs.length === 0) {
+      els.pickerDogList.innerHTML = `<li class="empty-state">No dogs match your search.</li>`;
+      return;
+    }
+
+    els.pickerDogList.innerHTML = dogs
+      .map((dog) => {
+        const picked = run.dogIds.includes(dog.id);
+        return `
+          <li class="dog-row${picked ? " picked" : ""}" data-dog-id="${dog.id}">
+            <button type="button" class="dog-main" data-action="toggle-pick" data-dog-id="${dog.id}" style="display:flex; align-items:center; gap:12px;">
+              ${dogAvatarHtml(dog)}
+              <span style="flex:1; min-width:0;">
+                <span class="dog-name">${escapeHtml(dog.name)} <span class="size-badge">${escapeHtml(dog.size)}</span></span>
+                <div class="dog-address">${escapeHtml(dog.address)}${
+                  dog.postcode ? " · " + escapeHtml(dog.postcode) : ""
+                }</div>
+              </span>
+            </button>
+            <span class="picker-check">✓</span>
+          </li>
+        `;
+      })
+      .join("");
+  }
+
+  function togglePick(dogId) {
+    const run = currentRun();
+    if (!run) return;
+    const idx = run.dogIds.indexOf(dogId);
+    if (idx === -1) run.dogIds.push(dogId);
+    else run.dogIds.splice(idx, 1);
+    renderPickerList();
+    saveRunStops(run);
   }
 
   // -------------------------------------------------------------------
-  // Select-mode bar (All dogs tab)
+  // Manage dogs (global) screen
   // -------------------------------------------------------------------
-  function renderSelectBar() {
-    els.selectBar.hidden = !state.selectMode;
-    els.selectCount.textContent = `${state.selectedIds.size} selected`;
-    els.selectAddBtn.disabled = state.selectedIds.size === 0;
+  function openManageDogsScreen() {
+    state.manageDogsSearch = "";
+    els.manageDogsSearch.value = "";
+    renderManageDogsList();
+    switchScreen("manage-dogs");
   }
 
-  // -------------------------------------------------------------------
-  // Full re-render
-  // -------------------------------------------------------------------
-  function renderAll() {
-    renderTopBar();
-    renderAllDogsTab();
-    renderRouteTab();
-    renderSelectBar();
+  function filteredManageDogs() {
+    const q = state.manageDogsSearch.trim().toLowerCase();
+    return state.dogs
+      .filter((d) => state.manageDogsShowArchived || !d.archived)
+      .filter((d) => {
+        if (!q) return true;
+        return (
+          d.name.toLowerCase().includes(q) ||
+          d.address.toLowerCase().includes(q) ||
+          (d.postcode || "").toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  }
+
+  function renderManageDogsList() {
+    const dogs = filteredManageDogs();
+    if (dogs.length === 0) {
+      els.manageDogList.innerHTML = `<li class="empty-state">No dogs match your search.</li>`;
+      return;
+    }
+    els.manageDogList.innerHTML = dogs
+      .map((dog) => {
+        const rowClasses = ["dog-row"];
+        if (dog.archived) rowClasses.push("archived");
+        const keysafe = dog.keysafe
+          ? `<span class="keysafe-chip mono" title="Keysafe code">${escapeHtml(dog.keysafe)}</span>`
+          : "";
+        return `
+          <li class="${rowClasses.join(" ")}" data-dog-id="${dog.id}">
+            ${dogAvatarHtml(dog)}
+            <button type="button" class="dog-main" data-action="open-detail" data-dog-id="${dog.id}">
+              <div class="dog-name">
+                ${escapeHtml(dog.name)}
+                <span class="size-badge">${escapeHtml(dog.size)}</span>
+              </div>
+              <div class="dog-address">${escapeHtml(dog.address)}${
+                dog.postcode ? " · " + escapeHtml(dog.postcode) : ""
+              }</div>
+            </button>
+            ${keysafe}
+            <button type="button" class="kebab-btn" data-action="kebab-manage" data-dog-id="${dog.id}" aria-label="More options">⋮</button>
+          </li>
+        `;
+      })
+      .join("");
+  }
+
+  async function archiveDog(dogId, archived) {
+    try {
+      const updated = await api.patchDog(dogId, { archived });
+      const idx = state.dogs.findIndex((d) => d.id === dogId);
+      if (idx !== -1) state.dogs[idx] = updated;
+      renderManageDogsList();
+      toast(archived ? "Dog archived" : "Dog restored");
+    } catch (err) {
+      toast(err.message || "Something went wrong");
+    }
   }
 
   // -------------------------------------------------------------------
@@ -424,7 +599,6 @@
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
 
-    // Clamp vertically after render (menu height depends on content).
     requestAnimationFrame(() => {
       const menuRect = menu.getBoundingClientRect();
       if (menuRect.bottom > window.innerHeight - 8) {
@@ -454,158 +628,82 @@
     }
   });
 
-  function kebabItemsForAllDogs(dog) {
-    const inRoute = currentRoute().dogIds.includes(dog.id);
-    const items = [
+  function kebabItemsForRunStop(dog) {
+    return [
       { label: "View details", onSelect: () => openDetailSheet(dog.id) },
+      { label: "Remove from run", danger: true, onSelect: () => removeFromRun(dog.id) },
     ];
+  }
+
+  function kebabItemsForManageDog(dog) {
+    const items = [{ label: "View details", onSelect: () => openDetailSheet(dog.id) }];
     if (!dog.archived) {
-      items.push({
-        label: inRoute ? "Remove from today's route" : "Add to today's route",
-        onSelect: () => toggleDogInRoute(dog.id, !inRoute),
-      });
-      items.push({
-        label: "Archive dog",
-        danger: true,
-        onSelect: () => archiveDog(dog.id, true),
-      });
+      items.push({ label: "Archive dog", danger: true, onSelect: () => archiveDog(dog.id, true) });
     } else {
-      items.push({
-        label: "Restore dog",
-        onSelect: () => archiveDog(dog.id, false),
-      });
+      items.push({ label: "Restore dog", onSelect: () => archiveDog(dog.id, false) });
     }
     return items;
   }
 
-  function kebabItemsForRoute(dog) {
-    return [
-      { label: "View details", onSelect: () => openDetailSheet(dog.id) },
-      {
-        label: "Remove from route",
-        danger: true,
-        onSelect: () => toggleDogInRoute(dog.id, false),
-      },
-    ];
-  }
-
   // -------------------------------------------------------------------
-  // Route mutation helpers
+  // New run sheet
   // -------------------------------------------------------------------
-  function toggleDogInRoute(dogId, add) {
-    const route = currentRoute();
-    const idx = route.dogIds.indexOf(dogId);
-    if (add && idx === -1) {
-      route.dogIds.push(dogId);
-    } else if (!add && idx !== -1) {
-      route.dogIds.splice(idx, 1);
-    } else {
-      return;
-    }
-    markDirty();
-    renderAllDogsTab();
-    renderRouteTab();
-    toast(add ? "Added to today's route" : "Removed from route");
-  }
+  function openNewRunSheet() {
+    const todayIso = toISODate(new Date());
+    els.newRunSheet.innerHTML = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h2 class="sheet-title">New run</h2>
+        <button type="button" class="sheet-close" data-action="close-new-run">✕</button>
+      </div>
+      <form id="newRunForm">
+        <div class="field-group">
+          <span class="field-label">Title *</span>
+          <input class="field-input" id="newRunTitle" placeholder="e.g. Justin + Nigel AM" required />
+        </div>
+        <div class="field-group">
+          <span class="field-label">Date *</span>
+          <input class="field-input" id="newRunDate" type="date" value="${todayIso}" required />
+        </div>
+        <div class="sheet-actions">
+          <button type="submit" class="primary-btn" style="flex:1;">Create run</button>
+        </div>
+      </form>
+    `;
 
-  function moveInRoute(dogId, direction) {
-    const route = currentRoute();
-    const idx = route.dogIds.indexOf(dogId);
-    const swapWith = idx + direction;
-    if (idx === -1 || swapWith < 0 || swapWith >= route.dogIds.length) return;
-    const arr = route.dogIds;
-    [arr[idx], arr[swapWith]] = [arr[swapWith], arr[idx]];
-    markDirty();
-    renderRouteTab();
-  }
-
-  async function archiveDog(dogId, archived) {
-    try {
-      const updated = await api.patchDog(dogId, { archived });
-      const idx = state.dogs.findIndex((d) => d.id === dogId);
-      if (idx !== -1) state.dogs[idx] = updated;
-      if (archived) {
-        ["am", "pm"].forEach((mode) => {
-          const before = state.routes[mode].dogIds.length;
-          state.routes[mode].dogIds = state.routes[mode].dogIds.filter(
-            (id) => id !== dogId
-          );
-          if (state.routes[mode].dogIds.length !== before) {
-            state.routeDirty[mode] = true;
-          }
-        });
+    els.newRunSheet.querySelector("[data-action='close-new-run']").addEventListener("click", closeNewRunSheet);
+    els.newRunSheet.querySelector("#newRunForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = els.newRunSheet.querySelector("#newRunTitle").value.trim();
+      const date = els.newRunSheet.querySelector("#newRunDate").value;
+      if (!title || !date) {
+        toast("Title and date are required");
+        return;
       }
-      renderAll();
-      toast(archived ? "Dog archived" : "Dog restored");
-    } catch (err) {
-      toast(err.message || "Something went wrong");
-    }
-  }
-
-  async function saveRoute() {
-    const mode = state.currentMode;
-    try {
-      const result = await api.putRoute(mode, state.routes[mode].dogIds);
-      state.routes[mode].savedAt = result.savedAt;
-      state.routeDirty[mode] = false;
-      renderSaveBar();
-      toast("Route saved");
-    } catch (err) {
-      toast(err.message || "Failed to save route");
-    }
-  }
-
-  async function sortByNearby() {
-    const route = currentRoute();
-    const dogs = route.dogIds.map((id) => dogById(id)).filter(Boolean);
-    if (dogs.length < 2) return;
-
-    const start = await getStartingPoint();
-    const remaining = dogs.slice();
-    const ordered = [];
-    let current = start;
-
-    while (remaining.length) {
-      let bestIndex = 0;
-      let bestDist = Infinity;
-      remaining.forEach((dog, i) => {
-        const dist = haversine(current, centroidFor(dog));
-        if (dist < bestDist) {
-          bestDist = dist;
-          bestIndex = i;
-        }
-      });
-      const [next] = remaining.splice(bestIndex, 1);
-      ordered.push(next);
-      current = centroidFor(next);
-    }
-
-    route.dogIds = ordered.map((d) => d.id);
-    markDirty();
-    renderRouteTab();
-    toast("Sorted by nearby (approximate)");
-  }
-
-  function getStartingPoint() {
-    return new Promise((resolve) => {
-      if (!navigator.geolocation) return resolve(DEPOT);
-      const timer = setTimeout(() => resolve(DEPOT), 4000);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          clearTimeout(timer);
-          resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        },
-        () => {
-          clearTimeout(timer);
-          resolve(DEPOT);
-        },
-        { timeout: 3800, maximumAge: 60000 }
-      );
+      try {
+        const run = await api.createRun({ title, date });
+        state.runs.push(run);
+        closeNewRunSheet();
+        state.weekStart = startOfWeek(new Date(`${date}T00:00:00`));
+        renderCalendar();
+        openRun(run.id);
+        openAddDogsScreen();
+        toast(`"${run.title}" created — add some dogs`);
+      } catch (err) {
+        toast(err.message || "Failed to create run");
+      }
     });
+
+    els.newRunOverlay.hidden = false;
+  }
+
+  function closeNewRunSheet() {
+    els.newRunOverlay.hidden = true;
+    els.newRunSheet.innerHTML = "";
   }
 
   // -------------------------------------------------------------------
-  // Detail sheet
+  // Dog detail sheet
   // -------------------------------------------------------------------
   function openDetailSheet(dogId) {
     const dog = dogById(dogId);
@@ -620,8 +718,6 @@
   }
 
   function renderDetailSheet(dog) {
-    const inRoute = currentRoute().dogIds.includes(dog.id);
-
     els.detailSheet.innerHTML = `
       <div class="sheet-handle"></div>
       <div class="sheet-header">
@@ -681,15 +777,10 @@
       </div>
 
       <div class="sheet-actions">
-        <button type="button" class="secondary-btn" id="toggleRouteBtn">
-          ${inRoute ? "Remove from today's route" : "Add to today's route"}
-        </button>
-        <button type="button" class="primary-btn" id="saveFieldsBtn">Save</button>
-      </div>
-      <div class="sheet-actions">
-        <button type="button" class="secondary-btn" id="archiveBtn">
+        <button type="button" class="secondary-btn" id="archiveBtn" style="flex:1;">
           ${dog.archived ? "Restore dog" : "Archive dog"}
         </button>
+        <button type="button" class="primary-btn" id="saveFieldsBtn">Save</button>
       </div>
     `;
 
@@ -702,8 +793,9 @@
         const idx = state.dogs.findIndex((d) => d.id === dog.id);
         if (idx !== -1) state.dogs[idx].photoPath = photoPath;
         renderDetailSheet(dog);
-        renderAllDogsTab();
-        renderRouteTab();
+        renderManageDogsList();
+        renderRunScreen();
+        renderPickerList();
         toast("Photo updated");
       } catch (err) {
         toast(err.message || "Photo upload failed");
@@ -737,17 +829,12 @@
         const updated = await api.patchDog(dog.id, payload);
         const idx = state.dogs.findIndex((d) => d.id === dog.id);
         if (idx !== -1) state.dogs[idx] = { ...state.dogs[idx], ...updated };
-        renderAllDogsTab();
-        renderRouteTab();
+        renderManageDogsList();
+        renderRunScreen();
         toast("Saved");
       } catch (err) {
         toast(err.message || "Failed to save");
       }
-    });
-
-    els.detailSheet.querySelector("#toggleRouteBtn").addEventListener("click", () => {
-      toggleDogInRoute(dog.id, !currentRoute().dogIds.includes(dog.id));
-      renderDetailSheet(dog);
     });
 
     els.detailSheet.querySelector("#archiveBtn").addEventListener("click", async () => {
@@ -759,7 +846,7 @@
   }
 
   // -------------------------------------------------------------------
-  // Add dog sheet
+  // Add dog sheet (new dog form)
   // -------------------------------------------------------------------
   function openAddSheet() {
     els.addSheet.innerHTML = `
@@ -827,7 +914,7 @@
         const dog = await api.createDog(payload);
         state.dogs.push(dog);
         closeAddSheet();
-        renderAllDogsTab();
+        renderManageDogsList();
         toast(`${dog.name} added`);
       } catch (err) {
         toast(err.message || "Failed to add dog");
@@ -845,156 +932,127 @@
   // -------------------------------------------------------------------
   // Event wiring
   // -------------------------------------------------------------------
-  function switchMode(mode) {
-    if (mode === state.currentMode) return;
-    if (state.routeDirty[state.currentMode]) {
-      const ok = confirm("You have unsaved route changes. Switch anyway?");
-      if (!ok) return;
-    }
-    state.currentMode = mode;
-    localStorage.setItem("theround.mode", mode);
-    renderAll();
-  }
-
-  function switchTab(tab) {
-    state.activeTab = tab;
-    if (tab !== "all" && state.selectMode) {
-      state.selectMode = false;
-      state.selectedIds.clear();
-    }
-    renderAll();
-  }
-
   function wireEvents() {
-    els.modeButtons.forEach((btn) =>
-      btn.addEventListener("click", () => switchMode(btn.dataset.mode))
-    );
-    els.tabButtons.forEach((btn) =>
-      btn.addEventListener("click", () => switchTab(btn.dataset.tab))
-    );
-    els.flipModeBtn.addEventListener("click", () =>
-      switchMode(state.currentMode === "am" ? "pm" : "am")
-    );
-
-    els.searchInput.addEventListener(
-      "input",
-      debounce((e) => {
-        state.search = e.target.value;
-        renderAllDogsTab();
-      }, 150)
-    );
-
-    els.selectToggleBtn.addEventListener("click", () => {
-      state.selectMode = !state.selectMode;
-      state.selectedIds.clear();
-      renderTopBar();
-      renderAllDogsTab();
-      renderSelectBar();
+    // Calendar screen
+    els.manageDogsBtn.addEventListener("click", openManageDogsScreen);
+    els.prevWeekBtn.addEventListener("click", () => changeWeek(-1));
+    els.nextWeekBtn.addEventListener("click", () => changeWeek(1));
+    els.weekLabel.addEventListener("click", () => {
+      state.weekStart = startOfWeek(new Date());
+      renderCalendar();
+    });
+    els.newRunFab.addEventListener("click", openNewRunSheet);
+    els.agendaList.addEventListener("click", (e) => {
+      const pill = e.target.closest("[data-run-id]");
+      if (pill) openRun(pill.dataset.runId);
     });
 
-    els.selectCancelBtn.addEventListener("click", () => {
-      state.selectMode = false;
-      state.selectedIds.clear();
-      renderTopBar();
-      renderAllDogsTab();
-      renderSelectBar();
+    // Run detail screen
+    els.runBackBtn.addEventListener("click", () => {
+      switchScreen("calendar");
+      renderCalendar();
     });
-
-    els.selectAddBtn.addEventListener("click", () => {
-      const route = currentRoute();
-      let added = 0;
-      state.selectedIds.forEach((id) => {
-        if (!route.dogIds.includes(id)) {
-          route.dogIds.push(id);
-          added++;
-        }
-      });
-      if (added > 0) markDirty();
-      state.selectMode = false;
-      state.selectedIds.clear();
-      state.activeTab = "route";
-      renderAll();
-      toast(`${added} dog${added === 1 ? "" : "s"} added to route`);
+    els.runKebabBtn.addEventListener("click", () => {
+      openContextMenu(els.runKebabBtn, [
+        { label: "Delete run", danger: true, onSelect: deleteCurrentRun },
+      ]);
     });
-
-    els.saveRouteBtn.addEventListener("click", saveRoute);
-    els.sortNearbyBtn.addEventListener("click", sortByNearby);
-    els.addDogFab.addEventListener("click", openAddSheet);
-
-    els.openMapsBtn.addEventListener("click", () => {
-      const dogs = currentRoute().dogIds.map((id) => dogById(id)).filter(Boolean);
-      if (dogs.length === 0) {
-        toast("No stops in today's route yet");
+    els.runTitleInput.addEventListener("blur", async () => {
+      const run = currentRun();
+      if (!run) return;
+      const value = els.runTitleInput.value.trim();
+      if (!value || value === run.title) {
+        els.runTitleInput.value = run.title;
         return;
       }
-      window.open(mapsMultiStopLink(dogs), "_blank", "noopener");
+      try {
+        const updated = await api.patchRun(run.id, { title: value });
+        Object.assign(run, updated);
+        renderCalendar();
+      } catch (err) {
+        els.runTitleInput.value = run.title;
+        toast(err.message || "Failed to rename run");
+      }
+    });
+    els.runDateInput.addEventListener("change", async () => {
+      const run = currentRun();
+      if (!run) return;
+      const value = els.runDateInput.value;
+      if (!value || value === run.date) return;
+      try {
+        const updated = await api.patchRun(run.id, { date: value });
+        Object.assign(run, updated);
+        renderCalendar();
+        toast("Run moved");
+      } catch (err) {
+        els.runDateInput.value = run.date;
+        toast(err.message || "Failed to move run");
+      }
+    });
+    els.addDogsBtn.addEventListener("click", openAddDogsScreen);
+    els.runStopsList.addEventListener("click", (e) => {
+      const detailBtn = e.target.closest("[data-action='open-detail']");
+      if (detailBtn) return openDetailSheet(detailBtn.dataset.dogId);
+      const upBtn = e.target.closest("[data-action='move-up']");
+      if (upBtn) return moveInRun(upBtn.dataset.dogId, -1);
+      const downBtn = e.target.closest("[data-action='move-down']");
+      if (downBtn) return moveInRun(downBtn.dataset.dogId, 1);
+      const kebabBtn = e.target.closest("[data-action='kebab-run-stop']");
+      if (kebabBtn) {
+        const dog = dogById(kebabBtn.dataset.dogId);
+        if (dog) openContextMenu(kebabBtn, kebabItemsForRunStop(dog));
+      }
     });
 
+    // Add dogs screen
+    els.addDogsBackBtn.addEventListener("click", () => {
+      renderRunScreen();
+      switchScreen("run");
+    });
+    els.addDogsSearch.addEventListener(
+      "input",
+      debounce((e) => {
+        state.addDogsSearch = e.target.value;
+        renderPickerList();
+      }, 150)
+    );
+    els.pickerDogList.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-action='toggle-pick']");
+      if (btn) togglePick(btn.dataset.dogId);
+    });
+
+    // Manage dogs screen
+    els.manageDogsBackBtn.addEventListener("click", () => {
+      switchScreen("calendar");
+      renderCalendar();
+    });
+    els.manageDogsSearch.addEventListener(
+      "input",
+      debounce((e) => {
+        state.manageDogsSearch = e.target.value;
+        renderManageDogsList();
+      }, 150)
+    );
+    els.addDogFab.addEventListener("click", openAddSheet);
+    els.manageDogList.addEventListener("click", (e) => {
+      const detailBtn = e.target.closest("[data-action='open-detail']");
+      if (detailBtn) return openDetailSheet(detailBtn.dataset.dogId);
+      const kebabBtn = e.target.closest("[data-action='kebab-manage']");
+      if (kebabBtn) {
+        const dog = dogById(kebabBtn.dataset.dogId);
+        if (dog) openContextMenu(kebabBtn, kebabItemsForManageDog(dog));
+      }
+    });
+
+    // Overlays
+    els.newRunOverlay.addEventListener("click", (e) => {
+      if (e.target === els.newRunOverlay) closeNewRunSheet();
+    });
     els.detailOverlay.addEventListener("click", (e) => {
       if (e.target === els.detailOverlay) closeDetailSheet();
     });
     els.addOverlay.addEventListener("click", (e) => {
       if (e.target === els.addOverlay) closeAddSheet();
-    });
-
-    // Delegated clicks: All dogs list
-    els.dogList.addEventListener("click", (e) => {
-      const checkbox = e.target.closest("[data-select-id]");
-      if (checkbox) {
-        const id = checkbox.dataset.selectId;
-        if (checkbox.checked) state.selectedIds.add(id);
-        else state.selectedIds.delete(id);
-        renderSelectBar();
-        return;
-      }
-
-      const detailBtn = e.target.closest("[data-action='open-detail']");
-      if (detailBtn) {
-        if (state.selectMode) {
-          const id = detailBtn.dataset.dogId;
-          const dog = dogById(id);
-          if (dog && dog.archived) return;
-          if (state.selectedIds.has(id)) state.selectedIds.delete(id);
-          else state.selectedIds.add(id);
-          renderAllDogsTab();
-          renderSelectBar();
-        } else {
-          openDetailSheet(detailBtn.dataset.dogId);
-        }
-        return;
-      }
-
-      const kebabBtn = e.target.closest("[data-action='kebab-all']");
-      if (kebabBtn) {
-        const dog = dogById(kebabBtn.dataset.dogId);
-        if (dog) openContextMenu(kebabBtn, kebabItemsForAllDogs(dog));
-      }
-    });
-
-    // Delegated clicks: Route list
-    els.routeList.addEventListener("click", (e) => {
-      const detailBtn = e.target.closest("[data-action='open-detail']");
-      if (detailBtn) {
-        openDetailSheet(detailBtn.dataset.dogId);
-        return;
-      }
-      const upBtn = e.target.closest("[data-action='move-up']");
-      if (upBtn) return moveInRoute(upBtn.dataset.dogId, -1);
-      const downBtn = e.target.closest("[data-action='move-down']");
-      if (downBtn) return moveInRoute(downBtn.dataset.dogId, 1);
-      const kebabBtn = e.target.closest("[data-action='kebab-route']");
-      if (kebabBtn) {
-        const dog = dogById(kebabBtn.dataset.dogId);
-        if (dog) openContextMenu(kebabBtn, kebabItemsForRoute(dog));
-      }
-    });
-
-    window.addEventListener("beforeunload", (e) => {
-      const anyDirty = state.routeDirty.am || state.routeDirty.pm;
-      if (anyDirty) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
     });
   }
 
@@ -1004,15 +1062,10 @@
   async function init() {
     wireEvents();
     try {
-      const [dogs, amRoute, pmRoute] = await Promise.all([
-        api.getDogs(),
-        api.getRoute("am"),
-        api.getRoute("pm"),
-      ]);
+      const [dogs, runs] = await Promise.all([api.getDogs(), api.getRuns()]);
       state.dogs = dogs;
-      state.routes.am = amRoute;
-      state.routes.pm = pmRoute;
-      renderAll();
+      state.runs = runs;
+      renderCalendar();
     } catch (err) {
       toast(err.message || "Failed to load data");
       console.error(err);
